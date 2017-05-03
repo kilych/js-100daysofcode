@@ -1,0 +1,21 @@
+{
+  "name": "kilych-100daysofcode-17",
+  "description": "A simple Node.js web-server",
+  "engines": {
+    "node": "6.10.2"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git"
+  },
+  "keywords": [
+    "node",
+    "heroku"
+  ],
+  "license": "MIT"
+}
