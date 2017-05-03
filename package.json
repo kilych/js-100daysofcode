@@ -2,14 +2,14 @@
   "name": "kilych-100daysofcode-17",
   "description": "A simple Node.js web-server",
   "engines": {
-    "node": "6.10.2"
+    "node": "7.x",
+    "npm": "4.5.0"
   },
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git"
   },
@@ -17,5 +17,8 @@
     "node",
     "heroku"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "version": "1.0.0",
+  "devDependencies": {},
+  "author": "kilych"
 }
