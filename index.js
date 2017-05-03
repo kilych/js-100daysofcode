@@ -28,7 +28,7 @@ app.set('port', (process.env.PORT || 5000));
 app.get('/', function(request, response) {
     // response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
     // response.write("#100днейкода (by kilych)");
-    response.send("100днейкода by kilych");
+    response.send("#100днейкода (by kilych)");
     // response.end();
 });
 
