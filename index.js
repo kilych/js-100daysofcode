@@ -22,16 +22,17 @@ app.get('/chat', function(req, res) {
 });
 
 io.on('connection', function(socket) {
-    // console.log('a user connected');
+    console.log('a user connected');
     socket.on('chat message', function(msg) {
         console.log('message: ' + msg);
         io.emit('chat message', msg);
+        // socket.broadcast.emit(msg);
     });
     // socket.on('disconnect', function() {
     // console.log('user disconnected');
     // });
 });
 
-app.listen(app.get('port'), function() {
+http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
