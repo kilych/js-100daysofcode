@@ -1,5 +1,5 @@
 {
-  "name": "kilych-100daysofcode-17",
+  "name": "kilych-100daysofcode",
   "description": "A simple Node.js web-server",
   "engines": {
     "node": "7.x",
@@ -10,7 +10,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
   },
   "repository": {
     "type": "git"
@@ -20,7 +21,7 @@
     "heroku"
   ],
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "devDependencies": {},
   "author": "kilych"
 }
