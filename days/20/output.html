@@ -19,7 +19,7 @@
       context = canvas.getContext('2d');
       const height = 320,
       width = 480,
-      dx = 20;
+      dx = 30;
       canvas.height = height;
       canvas.width  = width;
       context.translate(width/2, height/2);
@@ -46,21 +46,23 @@
       context.restore();
       };
 
-      drawTriangle(0, 0, 0, 30, 30, 0);
+      drawTriangle(0, 0, 0, dx, dx, 0);
 
       socket.on('moveon', function(msg) {
       switch (msg) {
       case 'forward':
-      x += dx;
+      if (x > width/2 - dx) x = -width/2 + dx;
+      else x += dx;
       // document.write('forward<br>');
       break;
       case 'backward':
+      if (x < -width/2) x = width/2 - dx;
       x -= dx;
       // document.write('backward<br>');
       break;
       }
       clear();
-      drawTriangle(x, y, 0, 30, 30, 0);
+      drawTriangle(x, y, 0, dx, dx, 0);
       });
     </script>
   </body>
