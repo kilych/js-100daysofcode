@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Input</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+    </style>
+  </head>
+  <body>
+    <!-- <input type="button" onclick="history.back();" value="Назад"/> -->
+    <!-- <input type="button" onclick="history.forward();" value="Вперед"/> -->
+    <!-- <form id="backward" action=""> -->
+      <input type="button" onclick="move_backward()" value="Backward"/>
+    <!-- </form> -->
+    <!-- <form id="forward" action=""> -->
+      <input type="button" onclick="move_forward()" value="Forward"/>
+    <!-- </form> -->
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect();
+        function move_backward() {
+          socket.emit('moveon', 'backward');
+          return false;
+        }
+        function move_forward() {
+          socket.emit('moveon', 'forward');
+          return false;
+        }
+    </script>
+  </body>
+</html>

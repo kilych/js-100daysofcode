@@ -28,9 +28,26 @@ io.on('connection', function(socket) {
         io.emit('chat message', msg);
         // socket.broadcast.emit(msg);
     });
+    socket.on('moveon', function(msg) {
+        console.log('moveon: ' + msg);
+        io.emit('moveon', msg);
+        // socket.broadcast.emit(msg);
+    });
     // socket.on('disconnect', function() {
     // console.log('user disconnected');
     // });
+});
+
+app.get('/19', function(req, res) {
+    res.sendFile(__dirname + '/other/socketio-chat.html');
+});
+
+app.get('/20/input', function(req, res) {
+    res.sendFile(__dirname + '/days/20/input.html');
+});
+
+app.get('/20/output', function(req, res) {
+    res.sendFile(__dirname + '/days/20/output.html');
 });
 
 http.listen(app.get('port'), function() {
