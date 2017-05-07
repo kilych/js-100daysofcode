@@ -50,15 +50,9 @@ app.get('/19', function(req, res) {
 
 io.of('/20').on('connection', function(socket) {
     console.log('day20: a user connected');
-    // socket.on('chat message', function(msg) {
-    //     console.log('message: ' + msg);
-    //     io.emit('chat message', msg);
-    //     // socket.broadcast.emit(msg);
-    // });
     socket.on('moveon', function(msg) {
         console.log('moveon: ' + msg);
-        io.emit('moveon', msg);
-        // socket.broadcast.emit(msg);
+        io.of('/20').emit('moveon', msg);
     });
     socket.on('disconnect', function() {
         console.log('day20: user disconnected');
@@ -71,6 +65,26 @@ app.get('/20/input', function(req, res) {
 
 app.get('/20/output', function(req, res) {
     res.sendFile(__dirname + '/days/20/output.html');
+});
+
+io.of('/21').on('connection', function(socket) {
+    console.log('day21: a user connected');
+    io.of('/21').emit('createsprite', socket.id);
+    socket.on('moveon', function(msg) {
+        console.log('moveon: ' + msg);
+        io.of('/21').emit('moveon', msg);
+    });
+    socket.on('disconnect', function() {
+        console.log('day21: user disconnected');
+    });
+});
+
+app.get('/21/input', function(req, res) {
+    res.sendFile(__dirname + '/days/21/input.html');
+});
+
+app.get('/21/output', function(req, res) {
+    res.sendFile(__dirname + '/days/21/output.html');
 });
 
 http.listen(app.get('port'), function() {

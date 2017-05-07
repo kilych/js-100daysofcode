@@ -14,14 +14,13 @@
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-1.11.1.js"></script> -->
     <script type="text/javascript">
-        // var socket = io.('/20');
-        var socket = io.connect('/20');
+        var socket = io.connect('/21');
         function move_backward() {
-          socket.emit('moveon', 'backward');
+          socket.emit('moveon', {id: socket.id, msg: 'backward'});
           return false;
         }
         function move_forward() {
-          socket.emit('moveon', 'forward');
+          socket.emit('moveon', {id: socket.id, msg: 'forward'});
           return false;
         }
     </script>

@@ -23,9 +23,11 @@
       canvas.height = height;
       canvas.width  = width;
       context.translate(width/2, height/2);
-      var x = 0, y = 0;
-      // var socket = io('/20');
-      var socket = io.connect('/20');
+      // var x = 0, y = 0;
+      var initY = -width/2;
+      var sprites = {};
+      // var socket = io('/21');
+      var socket = io.connect('/21');
 
       const drawTriangle = (startX, startY, shift1X, shift1Y, shift2X, shift2Y) => {
         context.beginPath();
@@ -47,10 +49,28 @@
         context.restore();
       };
 
-      drawTriangle(0, 0, 0, dx, dx, 0);
+      const createSprite = id => {
+        sprites[id] = {x: 0, y = initY};
+        initY += dx;
+      };
 
-      socket.on('moveon', function(msg) {
-        switch (msg) {
+      const drawSprites = () => {
+        clear();
+        for (var key in sprites) {
+          drawTriangle(sprites[key].x, sprites[key].y, 0, dx, dx, 0);
+        }
+      };
+
+      drawSprites();
+
+      socket.on('createsprite', function(msg) {
+        createsprite(msg);
+        drawSprites();
+      });
+
+      socket.on('moveon', function(data) {
+        var x = sprites[data.id].x;
+        switch (data.msg) {          
           case 'forward':
             if (x > width/2 - dx) x = -width/2 + dx;
             else x += dx;
@@ -62,8 +82,7 @@
             // document.write('backward<br>');
             break;
         }
-        clear();
-        drawTriangle(x, y, 0, dx, dx, 0);
+        drawSprites();
       });
     </script>
   </body>
