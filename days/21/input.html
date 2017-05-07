@@ -16,11 +16,11 @@
     <script type="text/javascript">
         var socket = io.connect('/21');
         function move_backward() {
-          socket.emit('moveon', {id: socket.id, msg: 'backward'});
+          socket.emit('movebackward');
           return false;
         }
         function move_forward() {
-          socket.emit('moveon', {id: socket.id, msg: 'forward'});
+          socket.emit('moveforward');
           return false;
         }
     </script>

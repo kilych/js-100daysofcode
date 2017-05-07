@@ -24,7 +24,7 @@
       canvas.width  = width;
       context.translate(width/2, height/2);
       // var x = 0, y = 0;
-      var initY = -width/2;
+      var initY = -height/2;
       var sprites = {};
       // var socket = io('/21');
       var socket = io.connect('/21');
@@ -50,8 +50,12 @@
       };
 
       const createSprite = id => {
-        sprites[id] = {x: 0, y = initY};
+        sprites[id] = {x: 0, y:  initY};
         initY += dx;
+      };
+
+      const deleteSprite = id => {
+        delete sprites[id];
       };
 
       const drawSprites = () => {
@@ -64,10 +68,32 @@
       drawSprites();
 
       socket.on('createsprite', function(msg) {
-        createsprite(msg);
+        createSprite(msg);
         drawSprites();
       });
 
+      socket.on('deletesprite', function(msg) {
+        deleteSprite(msg);
+        drawSprites();
+      });
+
+      socket.on('movebackward', function(data) {
+        var x = sprites[data].x;
+        if (x < -width/2) x = width/2 - dx;
+        x -= dx;
+        sprites[data].x = x;
+        drawSprites();
+      });
+
+      socket.on('moveforward', function(data) {
+        var x = sprites[data].x;
+        if (x > width/2 - dx) x = -width/2 + dx;
+        else x += dx;
+        sprites[data].x = x;
+        drawSprites();
+      });
+
+      /*
       socket.on('moveon', function(data) {
         var x = sprites[data.id].x;
         switch (data.msg) {          
@@ -82,8 +108,10 @@
             // document.write('backward<br>');
             break;
         }
+        sprites[data.id].x = x;
         drawSprites();
       });
+      */
     </script>
   </body>
 </html>

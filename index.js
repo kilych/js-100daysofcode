@@ -68,14 +68,19 @@ app.get('/20/output', function(req, res) {
 });
 
 io.of('/21').on('connection', function(socket) {
-    console.log('day21: a user connected');
+    console.log(socket.id + ' connected');
     io.of('/21').emit('createsprite', socket.id);
-    socket.on('moveon', function(msg) {
-        console.log('moveon: ' + msg);
-        io.of('/21').emit('moveon', msg);
+    socket.on('movebackward', function() {
+        console.log('moveon: ' + socket.id);
+        io.of('/21').emit('movebackward', socket.id);
+    });
+    socket.on('moveforward', function() {
+        console.log('moveon: ' + socket.id);
+        io.of('/21').emit('moveforward', socket.id);
     });
     socket.on('disconnect', function() {
-        console.log('day21: user disconnected');
+        console.log(socket.id + ' disconnected');
+        io.of('/21').emit('deletesprite', socket.id);
     });
 });
 
