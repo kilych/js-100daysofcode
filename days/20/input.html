@@ -9,16 +9,10 @@
     </style>
   </head>
   <body>
-    <!-- <input type="button" onclick="history.back();" value="Назад"/> -->
-    <!-- <input type="button" onclick="history.forward();" value="Вперед"/> -->
-    <!-- <form id="backward" action=""> -->
       <input type="button" onclick="move_backward()" value="Backward"/>
-    <!-- </form> -->
-    <!-- <form id="forward" action=""> -->
       <input type="button" onclick="move_forward()" value="Forward"/>
-    <!-- </form> -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-1.11.1.js"></script> -->
     <script type="text/javascript">
         var socket = io.connect();
         function move_backward() {

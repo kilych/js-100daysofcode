@@ -9,17 +9,17 @@
   <body>
     <canvas id="example"></canvas>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-1.11.1.js"></script> -->
+    <!-- This route doesn't enable in index.js. Access denied by web-server: -->
     <!-- <script src="/days/20/js/output.js"></script> -->
     <script type="text/javascript">
       "use strict";
 
       // init
       var canvas = document.getElementById('example'),
-      context = canvas.getContext('2d');
+          context = canvas.getContext('2d');
       const height = 320,
-      width = 480,
-      dx = 30;
+            width = 480,
+            dx = 30;
       canvas.height = height;
       canvas.width  = width;
       context.translate(width/2, height/2);
@@ -27,11 +27,11 @@
       var socket = io.connect();
 
       const drawTriangle = (startX, startY, shift1X, shift1Y, shift2X, shift2Y) => {
-      context.beginPath();
-      context.moveTo(startX, startY);
-      context.lineTo(startX + shift1X, startY + shift1Y);
-      context.lineTo(startX + shift1X + shift2X, startY + shift1Y + shift2Y);
-      context.fill();
+        context.beginPath();
+        context.moveTo(startX, startY);
+        context.lineTo(startX + shift1X, startY + shift1Y);
+        context.lineTo(startX + shift1X + shift2X, startY + shift1Y + shift2Y);
+        context.fill();
       };
 
       // const drawSampleTrinangle = (startX, startY) => {
@@ -40,27 +40,27 @@
 
       // http://stackoverflow.com/a/6722031
       const clear = () => {
-      context.save();
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.restore();
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.restore();
       };
 
       drawTriangle(0, 0, 0, dx, dx, 0);
 
       socket.on('moveon', function(msg) {
-      switch (msg) {
-      case 'forward':
-      if (x > width/2 - dx) x = -width/2 + dx;
-      else x += dx;
-      // document.write('forward<br>');
-      break;
-      case 'backward':
-      if (x < -width/2) x = width/2 - dx;
-      x -= dx;
-      // document.write('backward<br>');
-      break;
-      }
+        switch (msg) {
+          case 'forward':
+            if (x > width/2 - dx) x = -width/2 + dx;
+            else x += dx;
+            // document.write('forward<br>');
+            break;
+          case 'backward':
+            if (x < -width/2) x = width/2 - dx;
+            x -= dx;
+            // document.write('backward<br>');
+            break;
+        }
       clear();
       drawTriangle(x, y, 0, dx, dx, 0);
       });

@@ -17,10 +17,6 @@ app.get('/18', function(req, res) {
     res.sendFile(__dirname + '/days/18/18.html');
 });
 
-app.get('/chat', function(req, res) {
-    res.sendFile(__dirname + '/other/socketio-chat.html');
-});
-
 io.on('connection', function(socket) {
     console.log('a user connected');
     socket.on('chat message', function(msg) {
@@ -36,6 +32,10 @@ io.on('connection', function(socket) {
     // socket.on('disconnect', function() {
     // console.log('user disconnected');
     // });
+});
+
+app.get('/chat', function(req, res) {
+    res.sendFile(__dirname + '/other/socketio-chat.html');
 });
 
 app.get('/19', function(req, res) {
