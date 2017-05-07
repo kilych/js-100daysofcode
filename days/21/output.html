@@ -9,25 +9,22 @@
   <body>
     <canvas id="example"></canvas>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <!-- This route doesn't enable in index.js. Access denied by web-server: -->
-    <!-- <script src="/days/20/js/output.js"></script> -->
-    <script type="text/javascript">
+      <script type="text/javascript">
       "use strict";
 
       // init
       var canvas = document.getElementById('example'),
           context = canvas.getContext('2d');
       const height = 320,
-            width = 480,
-            dx = 30;
+            width = 480;
+      const dx = 30;
       canvas.height = height;
       canvas.width  = width;
       context.translate(width/2, height/2);
       // var x = 0, y = 0;
-      var initY = -height/2;
-      var sprites = {};
-      // var socket = io('/21');
-      var socket = io.connect('/21');
+      // var initY = -height/2;
+      // var sprites = {};
+      var socket = io.connect('/21-output');
 
       const drawTriangle = (startX, startY, shift1X, shift1Y, shift2X, shift2Y) => {
         context.beginPath();
@@ -49,24 +46,18 @@
         context.restore();
       };
 
-      const createSprite = id => {
-        sprites[id] = {x: 0, y:  initY};
-        initY += dx;
-      };
-
-      const deleteSprite = id => {
-        delete sprites[id];
-      };
-
-      const drawSprites = () => {
+      const drawSprites = sprites => {
         clear();
         for (var key in sprites) {
           drawTriangle(sprites[key].x, sprites[key].y, 0, dx, dx, 0);
         }
       };
 
-      drawSprites();
+      socket.on('update', function(data) {
+        drawSprites(data);
+      });
 
+      /*
       socket.on('createsprite', function(msg) {
         createSprite(msg);
         drawSprites();
@@ -77,6 +68,7 @@
         drawSprites();
       });
 
+      /*
       socket.on('movebackward', function(data) {
         var x = sprites[data].x;
         if (x < -width/2) x = width/2 - dx;
@@ -92,6 +84,7 @@
         sprites[data].x = x;
         drawSprites();
       });
+      */
 
       /*
       socket.on('moveon', function(data) {

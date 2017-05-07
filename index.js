@@ -67,20 +67,54 @@ app.get('/20/output', function(req, res) {
     res.sendFile(__dirname + '/days/20/output.html');
 });
 
-io.of('/21').on('connection', function(socket) {
+const height = 320,
+      width = 480,
+      dx = 30;
+var initY = -height/2;
+var sprites = {};
+
+const createSprite = id => {
+    sprites[id] = {x: 0, y:  initY};
+    initY += dx;
+    if (initY > height/2) initY -= height;
+};
+
+const deleteSprite = id => {
+    delete sprites[id];
+};
+
+io.of('/21-input').on('connection', function(socket) {
     console.log(socket.id + ' connected');
-    io.of('/21').emit('createsprite', socket.id);
+    createSprite(socket.id);
+    io.of('/21-output').emit('update', sprites);
     socket.on('movebackward', function() {
         console.log('moveon: ' + socket.id);
-        io.of('/21').emit('movebackward', socket.id);
+        var x = sprites[socket.id].x;
+        x -= dx;
+        if (x < -width/2) x += width;
+        sprites[socket.id].x = x;
+        io.of('/21-output').emit('update', sprites);
     });
     socket.on('moveforward', function() {
         console.log('moveon: ' + socket.id);
-        io.of('/21').emit('moveforward', socket.id);
+        var x = sprites[socket.id].x;
+        x += dx;
+        if (x > width/2) x -= width;
+        sprites[socket.id].x = x;
+        io.of('/21-output').emit('update', sprites);
     });
     socket.on('disconnect', function() {
         console.log(socket.id + ' disconnected');
-        io.of('/21').emit('deletesprite', socket.id);
+        deleteSprite(socket.id);
+        io.of('/21-output').emit('update', sprites);
+    });
+});
+
+io.of('/21-output').on('connection', function(socket) {
+    console.log(socket.id + ' connected');
+    io.of('/21-output').emit('update', sprites);
+    socket.on('disconnect', function() {
+        console.log(socket.id + ' disconnected');
     });
 });
 
