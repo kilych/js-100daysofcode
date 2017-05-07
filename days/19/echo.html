@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO Chat</title>
+    <title>Socket.IO Echo Server</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -15,7 +15,7 @@
   </head>
   <body>
     <p>
-      Simple public chat. See also simple <a href="19">echo server</a>.
+      Simple echo server. See also simple public <a href="chat">chat</a>.
     </p>
     <ul id="messages"></ul>
     <form action="">
@@ -25,8 +25,8 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       $(function () {
-        var socket = io('/chat');
-        // var socket = io.connect('/chat');
+        var socket = io('/19-echo');
+        // var socket = io.connect('/19-echo');
         $('form').submit(function(){
           socket.emit('chat message', $('#m').val());
           $('#m').val('');
