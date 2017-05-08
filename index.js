@@ -9,6 +9,10 @@ app.get('/', function(req, res) {
     res.send("#100днейкода (17th day by kilych)");
 });
 
+app.get('/14-16', function(req, res) {
+    res.sendFile(__dirname + '/days/14-16/shape.html');
+});
+
 app.get('/17', function(req, res) {
     res.send("#100днейкода (17th day by kilych)");
 });
