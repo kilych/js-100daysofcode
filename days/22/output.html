@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Days 22-23 output</title>
+        <style>
+         canvas { outline: 1px solid black; }
+        </style>
+    </head>
+
+    <body>
+        <canvas id="canvas" width="480" height="320"></canvas>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/EaselJS/0.8.0/easeljs.min.js'></script>
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script type="text/javascript">
+         "use strict";
+
+         // init
+         const radius = 20, dvy = 1;
+         var oldX, oldY,
+             dragX, dragY,
+             objects = {};
+         var socket = io.connect('/22-output');
+
+         //Create a stage by getting a reference to the canvas
+         var stage = new createjs.Stage("canvas");
+         stage.enableDOMEvents(true);
+         // var label = new createjs.Text("", "12px Sans-serif");
+         // stage.addChild(label);
+
+         // stage.on("stagemousedown", makeCircle);
+         // stage.on("pressmove", dragObject);
+         // stage.on("stagemouseup", releaseObject);
+
+         //Update stage will render next frame
+         createjs.Ticker.setFPS(50);
+         createjs.Ticker.addEventListener("tick", handleTick);
+         function handleTick() {
+             // for(var key in objects) { objects[key].handleTick(); }
+             stage.update();
+         }
+
+         socket.on('init', function(items) {
+             for(var key in items) {
+                 makeCircle(items[key]);
+             }
+         });
+
+         socket.on('newitem', function(item) {
+             console.log(item);
+             makeCircle(item);
+         });
+
+         socket.on('moveto', function(point) {
+             console.log(point);
+             objects[point.id].x = point.x;
+             objects[point.id].y = point.y;
+         });
+
+         socket.on('delete', function(id) {
+             stage.removeChild(objects[id]);
+             stage.update();
+             delete objects[id];
+         });
+
+         function makeCircle(item) {
+             // oldX = event.stageX;
+             // oldY = event.stageY;
+             // dragX = event.stageX;
+             // dragY = event.stageY;
+             var circle = new createjs.Shape();
+             var color = createjs.Graphics.getHSL(item.color, 100, 50);
+             circle.graphics.beginFill(color).drawCircle(0, 0, item.radius);
+             circle.alpha = 0.3;
+             circle.radius = item.radius;
+             //Set position of Shape instance:
+             circle.x = item.x;
+             circle.y = item.y;
+             circle.nowDragging = false;
+
+             circle.handleTick = function() {
+                 if (this.nowDragging) {
+                     this.x = dragX;
+                     this.y = dragY;
+                     this.dx = (this.x - oldX);
+                     this.dy = (this.y - oldY);
+                     oldX = this.x;
+                     oldY = this.y;
+                 } else {
+                     this.dy += dvy;
+                     this.x += this.dx;
+                     this.y += this.dy;
+                     if (this.x < this.radius) {
+                         this.x = this.radius;
+                         this.dx = -this.dx;
+                     }
+                     if (this.x > stage.canvas.width - this.radius) {
+                         this.x = stage.canvas.width - this.radius;
+                         this.dx = -this.dx;
+                     }
+                     if (this.y < this.radius) {
+                         this.y = this.radius;
+                         this.dy = -this.dy;
+                     }
+                     if (this.y > stage.canvas.height - this.radius) {
+                         this.y = stage.canvas.height - this.radius;
+                         this.dy = -this.dy;
+                     }
+                 }
+             };
+
+             // circle.on("pressmove", dragObject);
+
+             stage.addChild(circle);
+             objects[item.id] = circle;
+         }
+
+         function dragObject(event) {
+             dragX = event.stageX;
+             dragY = event.stageY;
+         }
+
+         function releaseObject() {
+             objects[objects.length - 1].nowDragging = false;
+         }
+        </script>
+    </body>
+</html>
