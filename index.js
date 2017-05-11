@@ -5,6 +5,8 @@ var io = require('socket.io')(http);
 
 app.set('port', (process.env.PORT || 5000));
 
+app.use(express.static(__dirname + '/frontend'));
+
 app.get('/', function(req, res) {
     res.send("#100днейкода (17th day by kilych)");
 });
