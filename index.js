@@ -182,7 +182,7 @@ var items24 = {};
 
 io.of('/24').on('connection', function(socket) {
     console.log(socket.id + ' connected');
-    io.of('/24').emit('init', items24);
+    socket.emit('init', items24);
     socket.on('newitem', function(item) {
         item['id'] = socket.id;
         items24[socket.id] = item;
