@@ -12,7 +12,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/14-16', function(req, res) {
-    res.sendFile(__dirname + '/days/14-16/shape.html');
+    res.sendFile(__dirname + '/frontend/14-16/shape.html');
 });
 
 app.get('/17', function(req, res) {
@@ -20,7 +20,7 @@ app.get('/17', function(req, res) {
 });
 
 app.get('/18', function(req, res) {
-    res.sendFile(__dirname + '/days/18/18.html');
+    res.sendFile(__dirname + '/frontend/18/18.html');
 });
 
 io.of('/chat').on('connection', function(socket) {
@@ -36,7 +36,7 @@ io.of('/chat').on('connection', function(socket) {
 });
 
 app.get('/chat', function(req, res) {
-    res.sendFile(__dirname + '/other/socketio-chat.html');
+    res.sendFile(__dirname + '/frontend/other/socketio-chat.html');
 });
 
 io.of('/19-echo').on('connection', function(socket) {
@@ -51,7 +51,7 @@ io.of('/19-echo').on('connection', function(socket) {
 });
 
 app.get('/19', function(req, res) {
-    res.sendFile(__dirname + '/days/19/echo.html');
+    res.sendFile(__dirname + '/frontend/19/echo.html');
 });
 
 io.of('/20').on('connection', function(socket) {
@@ -66,11 +66,11 @@ io.of('/20').on('connection', function(socket) {
 });
 
 app.get('/20/input', function(req, res) {
-    res.sendFile(__dirname + '/days/20/input.html');
+    res.sendFile(__dirname + '/frontend/20/input.html');
 });
 
 app.get('/20/output', function(req, res) {
-    res.sendFile(__dirname + '/days/20/output.html');
+    res.sendFile(__dirname + '/frontend/20/output.html');
 });
 
 const height = 320,
@@ -125,11 +125,11 @@ io.of('/21-output').on('connection', function(socket) {
 });
 
 app.get('/21/input', function(req, res) {
-    res.sendFile(__dirname + '/days/21/input.html');
+    res.sendFile(__dirname + '/frontend/21/input.html');
 });
 
 app.get('/21/output', function(req, res) {
-    res.sendFile(__dirname + '/days/21/output.html');
+    res.sendFile(__dirname + '/frontend/21/output.html');
 });
 
 var items = {};
@@ -170,11 +170,11 @@ io.of('/22-output').on('connection', function(socket) {
 });
 
 app.get('/22/input', function(req, res) {
-    res.sendFile(__dirname + '/days/22/input.html');
+    res.sendFile(__dirname + '/frontend/22/input.html');
 });
 
 app.get('/22/output', function(req, res) {
-    res.sendFile(__dirname + '/days/22/output.html');
+    res.sendFile(__dirname + '/frontend/22/output.html');
 });
 
 var items24 = {};
@@ -208,7 +208,7 @@ io.of('/24').on('connection', function(socket) {
 });
 
 app.get('/24', function(req, res) {
-    res.sendFile(__dirname + '/days/24/index.html');
+    res.sendFile(__dirname + '/frontend/24/client.html');
 });
 
 http.listen(app.get('port'), function() {
