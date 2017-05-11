@@ -11,8 +11,9 @@ app.get('/', function(req, res) {
     res.send("#100днейкода (17th day by kilych)");
 });
 
+// app.get('/15', function(req, res) {res.send(req)});
 app.get('/14-16', function(req, res) {
-    res.sendFile(__dirname + '/frontend/14-16/shape.html');
+    res.sendFile(__dirname + '/frontend/14-16/shape/index.html');
 });
 
 app.get('/17', function(req, res) {
@@ -208,7 +209,7 @@ io.of('/24').on('connection', function(socket) {
 });
 
 app.get('/24', function(req, res) {
-    res.sendFile(__dirname + '/frontend/24/client.html');
+    res.sendFile(__dirname + '/frontend/24/client/index.html');
 });
 
 http.listen(app.get('port'), function() {
