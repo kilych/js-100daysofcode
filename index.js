@@ -246,6 +246,40 @@ app.get('/25', function(req, res) {
     res.sendFile(__dirname + '/frontend/25/client/index.html');
 });
 
+var items26 = {};
+
+io.of('/26').on('connection', function(socket) {
+    console.log(socket.id + ' connected');
+    socket.emit('init', items26);
+    socket.on('newitem', function(item) {
+        item['id'] = socket.id;
+        items26[socket.id] = item;
+        console.log('newitem: ' + item.x);
+        socket.broadcast.emit('newitem', item);
+    });
+    socket.on('moveto', function(point) {
+        // items26[scoket.id] can be undefined if client live when server rebooting
+        // state on client and server can be non-consistent.
+        // When reconnect client isn't reload, 'newitem' event don't pass.
+        if (items26[socket.id] !== undefined) {
+            items26[socket.id].x = point.x;
+            items26[socket.id].y = point.y;
+            point['id'] = socket.id;
+            // console.log('moveto: ' + point);
+            socket.broadcast.emit('moveto', point);
+        }
+    });
+    socket.on('disconnect', function() {
+        delete items26[socket.id];
+        io.of('/26').emit('delete', socket.id);
+        console.log(socket.id + ' disconnected');
+    });
+});
+
+app.get('/26', function(req, res) {
+    res.sendFile(__dirname + '/frontend/26/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });

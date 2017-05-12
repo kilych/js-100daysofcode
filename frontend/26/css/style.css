@@ -1,0 +1,11 @@
+#canvas {
+  border: 1px solid black;
+}
+
+#shape {
+  top: 20px;
+  left: 20px;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}

@@ -58,7 +58,8 @@ socket.emit('newitem', {radius: radius, color: clr, x: circle.x, y: circle.y});
 
 stage.addChild(circle);
 
-socket.on('newitem', function(item) { makeCircle(item); });
+// socket.on('newitem', function(item) { makeCircle(item); });
+socket.on('newitem', makeCircle);
 
 addEventListener("mouseup", function(event) {
     if (0 < event.x && event.x < width && 0 < event.y && event.y < height) {
