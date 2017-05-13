@@ -40,6 +40,7 @@ socket.on('moveto', function(point) {
 });
 
 socket.on('delete', function(id) {
+    canvas.removeChild(objects[id]);
     delete objects[id];
 });
 
@@ -48,6 +49,7 @@ function makeShape(item) {
     shape.style.width = "20px";
     shape.style.height = "20px";
     shape.style.backgroundColor = item.color;
+    shape.style.position = "relative";
     shape.style.left = item.x;
     shape.style.top = item.y;
 
