@@ -280,6 +280,10 @@ app.get('/26', function(req, res) {
     res.sendFile(__dirname + '/frontend/26/index.html');
 });
 
+app.get('/28', function(req, res) {
+    res.sendFile(__dirname + '/frontend/28/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
