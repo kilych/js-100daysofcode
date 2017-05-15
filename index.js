@@ -231,7 +231,6 @@ io.of('/25').on('connection', function(socket) {
             items25[socket.id].x = point.x;
             items25[socket.id].y = point.y;
             point['id'] = socket.id;
-            // console.log('moveto: ' + point);
             socket.broadcast.emit('moveto', point);
         }
     });
@@ -286,6 +285,40 @@ app.get('/28', function(req, res) {
 
 app.get('/28-fair', function(req, res) {
     res.sendFile(__dirname + '/frontend/28/quine-fair-browser.html');
+});
+
+var items29 = {};
+
+io.of('/29').on('connection', function(socket) {
+    console.log(socket.id + ' connected');
+    socket.emit('init', items29);
+    socket.on('newitem', function(item) {
+        item['id'] = socket.id;
+        items29[socket.id] = item;
+        console.log('newitem: ' + item.x);
+        socket.broadcast.emit('newitem', item);
+    });
+    socket.on('moveto', function(point) {
+        // items29[scoket.id] can be undefined if client live when server rebooting
+        // state on client and server can be non-consistent.
+        // When reconnect client isn't reload, 'newitem' event don't pass.
+        if (items29[socket.id] !== undefined) {
+            items29[socket.id].x = point.x;
+            items29[socket.id].y = point.y;
+            point['id'] = socket.id;
+            socket.broadcast.emit('moveto', point);
+            console.log('moveto: ' + point);
+        }
+    });
+    socket.on('disconnect', function() {
+        delete items29[socket.id];
+        io.of('/29').emit('delete', socket.id);
+        console.log(socket.id + ' disconnected');
+    });
+});
+
+app.get('/29', function(req, res) {
+    res.sendFile(__dirname + '/frontend/29/client/index.html');
 });
 
 http.listen(app.get('port'), function() {
