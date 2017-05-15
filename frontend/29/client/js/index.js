@@ -31,7 +31,7 @@ stage.enableDOMEvents(true);
 createjs.Touch.enable(stage);
 
 var text = new createjs.Text("Your circle is in center.\n"
-                             + "Click inside border to move it."
+                             + "Click anywhere to move it."
                              // ,"18px Arial"
                              ,"18px Sans-serif"
                              ,"#777");
