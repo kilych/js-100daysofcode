@@ -281,7 +281,11 @@ app.get('/26', function(req, res) {
 });
 
 app.get('/28', function(req, res) {
-    res.sendFile(__dirname + '/frontend/28/index.html');
+    res.sendFile(__dirname + '/frontend/28/quine-dom.html');
+});
+
+app.get('/28-fair', function(req, res) {
+    res.sendFile(__dirname + '/frontend/28/quine-fair-browser.html');
 });
 
 http.listen(app.get('port'), function() {

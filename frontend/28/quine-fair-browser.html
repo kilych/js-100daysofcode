@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Day 28. Quine fair</title>  
+</head>
+
+<body>
+  <script>let text = 'function completeText() { const q = String.fromCharCode(39), less = String.fromCharCode(60), more = String.fromCharCode(62); text = less + "script" + more + "let text = " + q + text + q + "; eval(text); completeText();"; } function myEcho() { const s = String.fromCharCode(47), less = String.fromCharCode(60), more = String.fromCharCode(62); document.body.appendChild(document.createTextNode(text + " myEcho();" + less + s + "script" + more)); };'; eval(text); completeText(); myEcho();</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+let text = 'function completeText() { const q = String.fromCharCode(39); text = "let text = " + q + text + q + "; eval(text); completeText();"; } function myEcho() { console.log(text + " myEcho();"); };'; eval(text); completeText(); myEcho();
