@@ -321,6 +321,61 @@ app.get('/29', function(req, res) {
     res.sendFile(__dirname + '/frontend/29/client/index.html');
 });
 
+let items30 = {};
+const defaultboard = 'eg32r';
+items30[defaultboard] = {};
+
+const makeBoardCode = () => {
+    let code = '';
+    const source = '0123456789abcdefghijklmnopqrstuvwxyz',
+          len = source.length;
+
+    for ( let i = 0; i < 5; i++ ) {
+        code += source.charAt(Math.floor(Math.random() * len));
+    }
+    return code;
+};
+
+io.of('/30').on('connection', function(socket) {
+    console.log(socket.id + ' connected');
+    let board = defaultboard;
+    socket.on('chooseboard', function(choosedboard) {
+        if(items30[choosedboard] === undefined) {
+            board = makeBoardCode();
+            items30[board] = {};
+        } else { board = choosedboard; }
+        socket.join(board);
+        items30[board].board = board;
+        socket.emit('init', items30[board]);
+    });
+    socket.on('newitem', function(item) {
+        item['id'] = socket.id;
+        items30[board][socket.id] = item;
+        // socket.broadcast.emit('newitem', item);
+        io.of('/30').to(board).emit('newitem', item);
+        console.log('newitem: ' + item.x);
+    });
+    socket.on('moveto', function(point) {
+        if (items30[board][socket.id] !== undefined) {
+            items30[board][socket.id].x = point.x;
+            items30[board][socket.id].y = point.y;
+            point['id'] = socket.id;
+            // socket.broadcast.emit('moveto', point);
+            io.of('/30').to(board).emit('moveto', point);
+            console.log('moveto: ' + point);
+        }
+    });
+    socket.on('disconnect', function() {
+        delete items30[board][socket.id];
+        io.of('/30').to(board).emit('delete', socket.id);
+        console.log(socket.id + ' disconnected');
+    });
+});
+
+app.get('/30', function(req, res) {
+    res.sendFile(__dirname + '/frontend/30/client/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
