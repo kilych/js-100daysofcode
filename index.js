@@ -344,8 +344,10 @@ io.of('/30').on('connection', function(socket) {
             board = makeBoardCode();
             items30[board] = {};
         } else { board = choosedboard; }
+        console.log(board);
         socket.join(board);
         items30[board].board = board;
+        console.log(items30[board].board);
         socket.emit('init', items30[board]);
     });
     socket.on('newitem', function(item) {

@@ -17,6 +17,7 @@ const alpha = 0.3,
       getInvisibilityTime = 100,
       moveTime = 300,
       defaultboard = 'eg32r';
+var text;
 var objects = {};
 var socket = io.connect('/30');
 
@@ -38,6 +39,7 @@ var board = prompt("Enter code of a board you want to connect.\n" +
 socket.emit('chooseboard', board);
 
 socket.on('init', function(items) {
+    console.log(items.board);
     board = items.board;
     delete items.board;
     for (let key in items) {
@@ -45,17 +47,16 @@ socket.on('init', function(items) {
             makeCircle(items[key]);
         // }
     }
-});
-
-var text = new createjs.Text("Your circle is in center.\n"
+    text = new createjs.Text("Your circle is in center.\n"
                              + "Click anywhere to move it.\n"
                              + "Board code: " + board
                              // ,"18px Arial"
                              ,"18px Sans-serif"
                              ,"#777");
-text.x = width/10;
-text.y = height/10;
-stage.addChild(text);
+    text.x = width/10;
+    text.y = height/10;
+    stage.addChild(text);
+});
 
 var circle = new createjs.Shape();
 var color = createjs.Graphics.getHSL(clr, 100, 50);
