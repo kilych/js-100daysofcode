@@ -321,6 +321,8 @@ app.get('/29', function(req, res) {
     res.sendFile(__dirname + '/frontend/29/client/index.html');
 });
 
+// issue with 'newitem' event that emits to client that started it -
+// doubling own client shape on client
 let items30 = {};
 const defaultboard = 'eg32r';
 items30[defaultboard] = {};
@@ -344,27 +346,28 @@ io.of('/30').on('connection', function(socket) {
             board = makeBoardCode();
             items30[board] = {};
         } else { board = choosedboard; }
-        console.log(board);
         socket.join(board);
         items30[board].board = board;
-        console.log(items30[board].board);
         socket.emit('init', items30[board]);
+        console.log(socket.id + ' joined board ' +
+                    items30[board].board);
     });
     socket.on('newitem', function(item) {
         item['id'] = socket.id;
         items30[board][socket.id] = item;
-        // socket.broadcast.emit('newitem', item);
-        io.of('/30').to(board).emit('newitem', item);
-        console.log('newitem: ' + item.x);
+        socket.broadcast.to(board).emit('newitem', item);
+        // io.of('/30').to(board).emit('newitem', item);
+        // console.log('newitem: ' + item.x);
     });
     socket.on('moveto', function(point) {
         if (items30[board][socket.id] !== undefined) {
             items30[board][socket.id].x = point.x;
             items30[board][socket.id].y = point.y;
             point['id'] = socket.id;
-            // socket.broadcast.emit('moveto', point);
-            io.of('/30').to(board).emit('moveto', point);
-            console.log('moveto: ' + point);
+            socket.broadcast.to(board).emit('moveto', point);
+            // io.of('/30').to(board).emit('moveto', point);
+            console.log(socket.id + ' moved to ' +
+                        point.x + ', ' + point.y);
         }
     });
     socket.on('disconnect', function() {

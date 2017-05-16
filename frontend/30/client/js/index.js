@@ -7,7 +7,6 @@
 "use strict";
 
 // init
-// const width = 480, height = 320;
 var width = window.innerWidth,
     height = window.innerHeight;
 const alpha = 0.3,
@@ -39,14 +38,9 @@ var board = prompt("Enter code of a board you want to connect.\n" +
 socket.emit('chooseboard', board);
 
 socket.on('init', function(items) {
-    console.log(items.board);
     board = items.board;
     delete items.board;
-    for (let key in items) {
-        // if (key !== 'board') {
-            makeCircle(items[key]);
-        // }
-    }
+    for (let key in items) { makeCircle(items[key]); }
     text = new createjs.Text("Your circle is in center.\n"
                              + "Click anywhere to move it.\n"
                              + "Board code: " + board
