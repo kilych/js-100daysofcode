@@ -100,7 +100,7 @@ function makeCircle(item) {
     var circle = new createjs.Shape();
     var color = createjs.Graphics.getHSL(item.color, 100, 50);
     circle.graphics.beginFill(color).drawCircle(0, 0, item.radius);
-    circle.alpha = 0.3;
+    circle.alpha = alpha;
     circle.radius = item.radius;
     // Set position of Shape instance:
     circle.x = item.x;
