@@ -107,6 +107,12 @@ app.get('/30', function(req, res) {
     res.sendFile(__dirname + '/frontend/30/client/index.html');
 });
 
+iohandlers.handleBoards(io.of('/33'));
+
+app.get('/33', function(req, res) {
+    res.sendFile(__dirname + '/frontend/33/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
