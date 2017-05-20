@@ -1,11 +1,11 @@
 var width = window.innerWidth,
-    height = window.innerHeight;
+    height = window.innerHeight,
+    scaleX = width/100,
+    scaleY = height/100,
+    scale = (scaleX + scaleY)/2;
 const alpha = 0.1,
       clr = Math.random() * 360,
-      radius = 10 + 20 * Math.random(),
-      // in milliseconds:
-      beInvisibleTime = 100,
-      moveTime = 300,
+      radius = (1 + 2 * Math.random()) * scale,
       defaultboard = 'eg32r';
 var objects = {};
 var socket = io.connect('/34');
@@ -79,7 +79,7 @@ for (var i = 0; i < circleCount; i++) {
 }
 activeCount = circleCount;
 
-socket.emit('newitem', {radius: radius, color: clr, x: circle.x, y: circle.y});
+socket.emit('newitem', {radius: radius/scale, color: clr, x: circle.x/scaleX, y: circle.y/scaleY});
 
 socket.on('newitem', makeCircle);
 
@@ -87,8 +87,9 @@ socket.on('moveto', function(point) {
 	  for (var i = 0; i < circleCount; i++) {
         var item = objects[point.id][i];
 		    createjs.Tween.get(item, {override: true})
-            .to({x: point.x, y: point.y}, (0.5 + i * 0.01) * 1500, createjs.Ease.bounceOut)
-            .call(function() { item.x = point.x; item.y = point.y; });
+            .to({x: point.x * scaleX, y: point.y * scaleY},
+                (0.5 + i * 0.01) * 500 * scale, createjs.Ease.bounceOut)
+            .call(function() { item.x = point.x * scaleX; item.y = point.y * scaleY; });
     }
 });
 
@@ -103,13 +104,13 @@ function makeCircle(item) {
     for (var i = 0; i < circleCount; i++) {
         var circle = new createjs.Shape();
         var color = createjs.Graphics.getHSL(item.color, 100, 50);
-        circle.graphics.beginFill(color).drawCircle(0, 0, item.radius);
+        circle.graphics.beginFill(color).drawCircle(0, 0, item.radius * scale);
         // circle.alpha = alpha;
         circle.alpha = alpha * (1 - i * 0.02);
-        circle.radius = item.radius;
+        circle.radius = item.radius * scale;
         // Set position of Shape instance:
-        circle.x = item.x;
-        circle.y = item.y;
+        circle.x = item.x * scaleX;
+        circle.y = item.y * scaleY;
         circle.compositeOperation = "lighter";
 
         tweens.push(circle);
@@ -127,11 +128,11 @@ function handleMouse(event) {
 	  for (var i = 0; i < circleCount; i++) {
 		    var ref = tweens[i];
 		    createjs.Tween.get(ref, {override: true})
-            .to({x: stage.mouseX, y: stage.mouseY}, (0.5 + i * 0.01) * 1500, createjs.Ease.bounceOut)
+            .to({x: stage.mouseX, y: stage.mouseY}, (0.5 + i * 0.01) * 500 * scale, createjs.Ease.bounceOut)
             .call(tweenComplete);
 	  }
 	  activeCount = circleCount;
-    socket.emit('moveto', {x: stage.mouseX, y: stage.mouseY});
+    socket.emit('moveto', {x: stage.mouseX/scaleX, y: stage.mouseY/scaleY});
 }
 
 function tweenComplete() { activeCount--; }

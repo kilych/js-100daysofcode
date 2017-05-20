@@ -3,9 +3,6 @@ var width = window.innerWidth,
 const alpha = 0.1,
       clr = Math.random() * 360,
       radius = 10 + 20 * Math.random(),
-      // in milliseconds:
-      beInvisibleTime = 100,
-      moveTime = 300,
       defaultboard = 'eg32r';
 var objects = {};
 var socket = io.connect('/33');
