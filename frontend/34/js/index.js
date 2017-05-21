@@ -2,7 +2,8 @@ var width = window.innerWidth,
     height = window.innerHeight,
     scaleX = width/100,
     scaleY = height/100,
-    scale = (scaleX + scaleY)/2;
+    scale = (scaleX + scaleY)/2,
+    moveTime = 200 * scale;     // milliseconds
 const alpha = 0.1,
       clr = Math.random() * 360,
       radius = (1 + 2 * Math.random()) * scale,
@@ -88,7 +89,7 @@ socket.on('moveto', function(point) {
         var item = objects[point.id][i];
 		    createjs.Tween.get(item, {override: true})
             .to({x: point.x * scaleX, y: point.y * scaleY},
-                (0.5 + i * 0.01) * 500 * scale, createjs.Ease.bounceOut)
+                (0.5 + i * 0.01) * moveTime, createjs.Ease.bounceOut)
             .call(function() { item.x = point.x * scaleX; item.y = point.y * scaleY; });
     }
 });
@@ -128,7 +129,7 @@ function handleMouse(event) {
 	  for (var i = 0; i < circleCount; i++) {
 		    var ref = tweens[i];
 		    createjs.Tween.get(ref, {override: true})
-            .to({x: stage.mouseX, y: stage.mouseY}, (0.5 + i * 0.01) * 500 * scale, createjs.Ease.bounceOut)
+            .to({x: stage.mouseX, y: stage.mouseY}, (0.5 + i * 0.01) * moveTime, createjs.Ease.bounceOut)
             .call(tweenComplete);
 	  }
 	  activeCount = circleCount;
