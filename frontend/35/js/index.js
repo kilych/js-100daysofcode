@@ -4,6 +4,8 @@ var width = window.innerWidth,
     scaleY = height/100,
     scale = (scaleX + scaleY)/2,
     moveTime = 200 * scale;     // milliseconds
+var initX = width * 0.2,
+    initY = height * 0.3;
 const alpha = 0.1,
       clr = Math.random() * 360,
       radius = (1 + 2 * Math.random()) * scale,
@@ -35,13 +37,15 @@ socket.on('init', function(items) {
     board = items.board;
     delete items.board;
     for (var key in items) { makeCircle(items[key]); }
-    text = new createjs.Text("Your circle is in center.\n"
-                             // + "Swipe anywhere to move it.\n"
-                             + "Tap or click anywhere to move it.\n"
-                             + "Board code: " + board
-                             // ,Math.floor(width/30) + "px Arial"
-                             ,Math.floor(width/30) + "px Sans-serif"
-                             ,"#777");
+
+    text = new createjs.Text(
+        // "Your circle is in center.\n"
+        // + "Swipe anywhere to move it.\n"
+        "Tap or click anywhere to move your circle.\n" +
+            "Board code: " + board
+        // ,Math.floor(width/30) + "px Arial"
+        ,Math.floor(width/30) + "px Sans-serif"
+        ,"#777");
     text.x = width/10;
     text.y = height/10;
     stage.addChild(text);
@@ -57,15 +61,15 @@ stage.addChild(line);
 
 // load the source image:
 var image = new Image();
-image.src = "https://openclipart.org/image/90px/svg_to_png/183228/1378699847.png";
+image.src = '/35/ball.png';
 // image.src = "https://cdn4.iconfinder.com/data/icons/ball-sports-1/28/soccer-ball-128.png";
-//image.width = 10;
-//image.height = 10;
+// image.width = 20 * scale;
+// image.height = 20 * scale;
 image.onload = function(event) {
     var image = event.target;
     var bitmap = new createjs.Bitmap(image);
-    bitmap.x = width/2;
-    bitmap.y = height/2;
+    bitmap.x = (width - image.width)/2;
+    bitmap.y = (height - image.height)/2;
     stage.addChild(bitmap);
 };
 
@@ -78,24 +82,25 @@ for (var i = 0; i < circleCount; i++) {
     circle.graphics.beginFill(color).drawCircle(0, 0, radius);
     // circle.alpha = alpha;
     circle.radius = radius;
-    circle.x = width/2;
-    circle.y = height/2;
+    // circle.x = width/2;
+    // circle.y = height/2;
     // circle.graphics.setStrokeStyle(15);
     // circle.graphics.beginStroke("#113355");
     // circle.graphics.drawCircle(0, 0, (i + 1) * 4);
     circle.alpha = alpha * (1 - i * 0.02);
-    // circle.x = Math.random() * width;
-    // circle.y = Math.random() * height;
+    circle.x = Math.random() * width;
+    circle.y = Math.random() * height;
     circle.compositeOperation = "lighter";
 
-    //var tween = createjs.Tween.get(circle).to({x: 275, y: 200}, (0.5 + i * 0.04) * 1500, createjs.Ease.bounceOut).call(tweenComplete);
+    var tween = createjs.Tween.get(circle).to({x: initX, y: initY}, (0.5 + i * 0.04) * moveTime, createjs.Ease.bounceOut).call(tweenComplete);
     // tweens.push({tween: tween, ref: circle});
     tweens.push(circle);
     stage.addChild(circle);
 }
+
 activeCount = circleCount;
 
-socket.emit('newitem', {radius: radius/scale, color: clr, x: circle.x/scaleX, y: circle.y/scaleY});
+socket.emit('newitem', {radius: radius/scale, color: clr, x: initX/scaleX, y: initY/scaleY});
 
 socket.on('newitem', makeCircle);
 
@@ -155,6 +160,6 @@ function tweenComplete() { activeCount--; }
 
 function tick(event) {
 	  // if (activeCount) {
-		stage.update(event);
+		    stage.update(event);
 	  // }
 }
