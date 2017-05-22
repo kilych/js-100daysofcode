@@ -116,13 +116,19 @@ app.get('/33', function(req, res) {
 iohandlers.handleBoards(io.of('/34'));
 
 app.get('/34', function(req, res) {
-    res.sendFile(__dirname + '/frontend/33/index.html');
+    res.sendFile(__dirname + '/frontend/34/index.html');
 });
 
 iohandlers.handleBoards(io.of('/35'));
 
 app.get('/35', function(req, res) {
-    res.sendFile(__dirname + '/frontend/33/index.html');
+    res.sendFile(__dirname + '/frontend/35/index.html');
+});
+
+iohandlers.handleBoards(io.of('/36'));
+
+app.get('/36', function(req, res) {
+    res.sendFile(__dirname + '/frontend/36/index.html');
 });
 
 http.listen(app.get('port'), function() {
