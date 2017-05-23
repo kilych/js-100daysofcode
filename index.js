@@ -125,7 +125,7 @@ app.get('/35', function(req, res) {
     res.sendFile(__dirname + '/frontend/35/index.html');
 });
 
-iohandlers.handleBoards(io.of('/36'));
+iohandlers.handleBoards36(io.of('/36'));
 
 app.get('/36', function(req, res) {
     res.sendFile(__dirname + '/frontend/36/index.html');
