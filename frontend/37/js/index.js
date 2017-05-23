@@ -74,6 +74,7 @@ socket.on('init', function(items) {
     delete items.board;
 
     text.text = "Tap or click anywhere to move your circle." +
+        "\nHit the blue circle for scoring goal."
         "\nBoard code: " + board +
         "\nScore: " + items.score.left + " : " + items.score.right;
     delete items.score;
