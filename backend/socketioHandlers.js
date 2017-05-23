@@ -260,6 +260,80 @@ exports.handleBoards36 = io => {
     });
 }
 
+exports.handleBoards37 = io => {
+    let items = {};
+    let ball = { id: 'ball',
+                 color: 180,
+                 radius: 2,
+                 x: 50,
+                 y: 50,
+                 dX: 0,
+                 dY: 0 };
+    const defaultboard = 'eg32r';
+    items[defaultboard] = {};
+    items[defaultboard].counter = 0;
+    items[defaultboard].ball = ball;
+    items[defaultboard].score = {};
+    items[defaultboard].score.left = 0;
+    items[defaultboard].score.right = 0;
+
+    io.on('connection', function(socket) {
+        console.log(socket.id + ' connected');
+        let board = defaultboard;
+        socket.on('chooseboard', function(choosedboard) {
+            if(items[choosedboard] === undefined) {
+                board = makeUniqCode(items);
+                items[board] = {};
+                items[board].counter = 0;
+                items[board].ball = ball;
+                items[defaultboard].score = {};
+                items[board].score.left = 0;
+                items[board].score.right = 0;
+            } else { board = choosedboard; }
+            socket.join(board);
+            items[board].board = board;
+            items[board].counter++;
+            socket.emit('init', items[board]);
+            console.log(socket.id + ' joined board ' + items[board].board);
+        });
+        socket.on('newitem', function(item) {
+            item['id'] = socket.id;
+            items[board][socket.id] = item;
+            socket.broadcast.to(board).emit('newitem', item);
+        });
+        socket.on('moveto', function(point) {
+            if (items[board][socket.id] !== undefined) {
+                if (point.id == 'ball') {
+                    items[board].ball.x = point.x;
+                    items[board].ball.y = point.y;
+                    items[board].ball.dX = point.dX;
+                    items[board].ball.dY = point.dY;
+                } else {
+                    items[board][socket.id].x = point.x;
+                    items[board][socket.id].y = point.y;
+                    point.id = socket.id;
+                }
+                socket.broadcast.to(board).emit('moveto', point);
+                // console.log(point.id + ' moves to ' + point.x + ', ' + point.y);
+            }
+        });
+        socket.on('goal', function(who) {
+            if (items[board][socket.id] !== undefined) {
+                if (who == 'left') { items[board].score.left++; }
+                if (who == 'right') { items[board].score.right++; }
+                io.to(board).emit('goal', { left: items[board].score.left,
+                                            right: items[board].score.right });
+                console.log(socket.id + ' new score ' + items[board].score.left + ':' + items[board].score.right);
+            }
+        });
+        socket.on('disconnect', function() {
+            delete items[board][socket.id];
+            io.to(board).emit('delete', socket.id);
+            console.log(socket.id + ' disconnected');
+        });
+    });
+}
+
 function makeBoardCode() {
     let code = '';
     const source = '0123456789abcdefghijklmnopqrstuvwxyz',

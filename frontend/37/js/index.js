@@ -10,7 +10,7 @@ var netLevel = height * 0.7;
 const alpha = 0.1,
       defaultboard = 'eg32r';
 var objects = {};
-var socket = io.connect('/36');
+var socket = io.connect('/37');
 var circleCount = 25;
 var init = false;
 
@@ -64,8 +64,10 @@ socket.on('init', function(items) {
     board = items.board;
     delete items.board;
 
-    text.text = "Tap or click anywhere to move your circle.\n" +
-        "Board code: " + board;
+    text.text = "Tap or click anywhere to move your circle." +
+        "\nBoard code: " + board +
+        "\nScore: " + items.score.left + " : " + items.score.right;
+    delete items.score;
 
     if (items.counter % 2 === 0) { circle.color = 240 + Math.random() * 120; }
     else { circle.color = Math.random() * 120; }
@@ -100,6 +102,12 @@ socket.on('moveto', function(point) {
         ball.dY = point.dY * scaleY;
     }
     moveTo(objects[point.id], point.x * scaleX, point.y * scaleY);
+});
+
+socket.on('goal', function(score) {
+    text.text = "Tap or click anywhere to move your circle." +
+        "\nBoard code: " + board +
+        "\nScore: " + score.left + " : " + score.right;
 });
 
 socket.on('delete', function(id) {
@@ -159,6 +167,7 @@ function tick() {
         ball.x += ball.dX;
         ball.y += ball.dY;
 
+        checkGoal();
         checkBall();
         checkBorders(circle);
         checkNet(circle);
@@ -169,6 +178,14 @@ function tick() {
 
         socket.emit('moveto', {x: circle.x/scaleX, y: circle.y/scaleY});
 		    stage.update();
+    }
+}
+
+function checkGoal() {
+    if (ball.y > height - ball.radius && ball.x > width/2) {
+        socket.emit('goal', 'left');
+    } else if (ball.y > height - ball.radius && ball.x < width/2) {
+        socket.emit('goal', 'right');
     }
 }
 
