@@ -126,6 +126,7 @@ socket.on('moveto', function(point) {
 
 socket.on('goal', function(score) {
     text.text = "Tap or click anywhere to move your circle." +
+        "\nHit the blue circle for scoring goal." +
         "\nBoard code: " + board +
         "\nScore: " + score.left + " : " + score.right;
 });
