@@ -5,6 +5,7 @@ var width = window.innerWidth,
     scale = (scaleX > scaleY) ? scaleX : scaleY,
     moveTime = 20,     // milliseconds
     fps = Math.floor(1000/moveTime);
+var radius = (1 + 2 * Math.random()) * scale;
 var ddY = 0.005 * scaleY;
 var netLevel = height * 0.7;
 const alpha = 0.1,
@@ -40,13 +41,21 @@ net.graphics.setStrokeStyle(3)
     .endStroke();
 stage.addChild(net);
 
-var circle = { radius: (1 + 2 * Math.random()) * scale,
+var circle = { radius: radius,
                x: width * 0.2,
                y: height * 0.3,
                dX: 0,
-               dY: 0 };
+               dY: 0,
+               initX: width/2,
+               initY: height * 0.3,
+               initdX: 0,
+               initdY: 0 };
 
-var ball = { x: width/2, y: height/2, dX: 0, dY: 0 };
+var ball = {};
+function initBall() {
+    ball = { radius: 2 * scale, x: width/2, y: height/2, dX: 0, dY: 0 };
+}
+initBall();
 
 stage.addEventListener("stagemouseup", handleMouse);
 function handleMouse(event) {
@@ -69,9 +78,16 @@ socket.on('init', function(items) {
         "\nScore: " + items.score.left + " : " + items.score.right;
     delete items.score;
 
-    if (items.counter % 2 === 0) { circle.color = 240 + Math.random() * 120; }
-    else { circle.color = Math.random() * 120; }
-    delete items.counter;
+    if (items.numberOfClients % 2 === 0) {
+        circle.color = 240 + Math.random() * 120;
+        circle.initX = 0.75 * width;
+    }
+    else {
+        circle.color = Math.random() * 120;
+        circle.initX = 0.25 * width;
+    }
+    circle.x = circle.initX;
+    delete items.numberOfClients;
     makeCircle({id: 'circle',
                 color: circle.color,
                 radius: circle.radius,
@@ -80,7 +96,10 @@ socket.on('init', function(items) {
 
     socket.emit('newitem', {radius: circle.radius/scale, color: circle.color, x: circle.x/scaleX, y: circle.y/scaleY});
 
-    for (var key in items) { makeCircle(scaleItem(items[key])); }
+    for (var key in items) {
+        scaleItem(items[key]);
+        makeCircle(items[key]);
+    }
 
     // without scaling cause mutation was before
     ball.radius = items.ball.radius;
@@ -92,7 +111,7 @@ socket.on('init', function(items) {
     init = true;
 });
 
-socket.on('newitem', function(item) { makeCircle(scaleItem(item)) });
+socket.on('newitem', function(item) { scaleItem(item); makeCircle(item) });
 
 socket.on('moveto', function(point) {
     if (point.id == 'ball') {
@@ -144,7 +163,6 @@ function scaleItem(item) {
     item.radius *= scale;
     item.x *= scaleX;
     item.y *= scaleY;
-    return item;
 }
 
 function moveTo(tweens, pointX, pointY) {
@@ -182,10 +200,14 @@ function tick() {
 }
 
 function checkGoal() {
-    if (ball.y > height - ball.radius && ball.x > width/2) {
-        socket.emit('goal', 'left');
-    } else if (ball.y > height - ball.radius && ball.x < width/2) {
-        socket.emit('goal', 'right');
+    if (ball.y > height - ball.radius) {
+        if (ball.x > width/2) { socket.emit('goal', 'left'); }
+        else if (ball.x < width/2) { socket.emit('goal', 'right'); }
+        circle.x = circle.initX;
+        circle.y = circle.initY;
+        circle.dX = circle.initdX;
+        circle.dY = circle.initdY;
+        initBall();
     }
 }
 

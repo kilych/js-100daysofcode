@@ -262,20 +262,19 @@ exports.handleBoards36 = io => {
 
 exports.handleBoards37 = io => {
     let items = {};
-    let ball = { id: 'ball',
-                 color: 180,
-                 radius: 2,
-                 x: 50,
-                 y: 50,
-                 dX: 0,
-                 dY: 0 };
     const defaultboard = 'eg32r';
-    items[defaultboard] = {};
-    items[defaultboard].counter = 0;
-    items[defaultboard].ball = ball;
-    items[defaultboard].score = {};
-    items[defaultboard].score.left = 0;
-    items[defaultboard].score.right = 0;
+    items[defaultboard] = { numberOfClients: 0,
+                            leftScoreCounter: 0,
+                            rightScoreCounter: 0,
+                            ball: { id: 'ball',
+                                    color: 180,
+                                    radius: 2,
+                                    x: 50,
+                                    y: 50,
+                                    dX: 0,
+                                    dY: 0 },
+                            score: { left: 0, right: 0 },
+                            scoreCounter: { left: 0, right: 0 } };
 
     io.on('connection', function(socket) {
         console.log(socket.id + ' connected');
@@ -283,16 +282,20 @@ exports.handleBoards37 = io => {
         socket.on('chooseboard', function(choosedboard) {
             if(items[choosedboard] === undefined) {
                 board = makeUniqCode(items);
-                items[board] = {};
-                items[board].counter = 0;
-                items[board].ball = ball;
-                items[defaultboard].score = {};
-                items[board].score.left = 0;
-                items[board].score.right = 0;
+                items[board] = { numberOfClients: 0,
+                                 ball: { id: 'ball',
+                                         color: 180,
+                                         radius: 2,
+                                         x: 50,
+                                         y: 50,
+                                         dX: 0,
+                                         dY: 0 },
+                                 score: { left: 0, right: 0 },
+                                 scoreCounter: { left: 0, right: 0 } };
             } else { board = choosedboard; }
             socket.join(board);
             items[board].board = board;
-            items[board].counter++;
+            items[board].numberOfClients++;
             socket.emit('init', items[board]);
             console.log(socket.id + ' joined board ' + items[board].board);
         });
@@ -319,11 +322,30 @@ exports.handleBoards37 = io => {
         });
         socket.on('goal', function(who) {
             if (items[board][socket.id] !== undefined) {
-                if (who == 'left') { items[board].score.left++; }
-                if (who == 'right') { items[board].score.right++; }
-                io.to(board).emit('goal', { left: items[board].score.left,
-                                            right: items[board].score.right });
-                console.log(socket.id + ' new score ' + items[board].score.left + ':' + items[board].score.right);
+                if (who == 'left') {
+                    items[board].scoreCounter.left++;
+                    if (items[board].scoreCounter.left ===
+                        items[board].numberOfClients) {
+                        items[board].scoreCounter.left = 0;
+                        items[board].score.left++;
+                        io.to(board).emit('goal', items[board].score);
+                        console.log(socket.id + ' new score ' +
+                                    items[board].score.left + ':' +
+                                    items[board].score.right);
+                    }
+                }
+                if (who == 'right') {
+                    items[board].scoreCounter.right++;
+                    if (items[board].scoreCounter.right ===
+                        items[board].numberOfClients) {
+                        items[board].scoreCounter.right = 0;
+                        items[board].score.right++;
+                        io.to(board).emit('goal', items[board].score);
+                        console.log(socket.id + ' new score ' +
+                                    items[board].score.left + ':' +
+                                    items[board].score.right);
+                    }
+                }
             }
         });
         socket.on('disconnect', function() {
