@@ -263,18 +263,7 @@ exports.handleBoards36 = io => {
 exports.handleBoards37 = io => {
     let items = {};
     const defaultboard = 'eg32r';
-    items[defaultboard] = { numberOfClients: 0,
-                            leftScoreCounter: 0,
-                            rightScoreCounter: 0,
-                            ball: { id: 'ball',
-                                    color: 180,
-                                    radius: 2,
-                                    x: 50,
-                                    y: 50,
-                                    dX: 0,
-                                    dY: 0 },
-                            score: { left: 0, right: 0 },
-                            scoreCounter: { left: 0, right: 0 } };
+    items[defaultboard] = initBoard();
 
     io.on('connection', function(socket) {
         console.log(socket.id + ' connected');
@@ -282,16 +271,7 @@ exports.handleBoards37 = io => {
         socket.on('chooseboard', function(choosedboard) {
             if(items[choosedboard] === undefined) {
                 board = makeUniqCode(items);
-                items[board] = { numberOfClients: 0,
-                                 ball: { id: 'ball',
-                                         color: 180,
-                                         radius: 2,
-                                         x: 50,
-                                         y: 50,
-                                         dX: 0,
-                                         dY: 0 },
-                                 score: { left: 0, right: 0 },
-                                 scoreCounter: { left: 0, right: 0 } };
+                items[board] = initBoard();
             } else { board = choosedboard; }
             socket.join(board);
             items[board].board = board;
@@ -351,9 +331,24 @@ exports.handleBoards37 = io => {
         socket.on('disconnect', function() {
             delete items[board][socket.id];
             io.to(board).emit('delete', socket.id);
+            items[board].numberOfClients--;
+            if (items[board].numberOfClients <= 0) {
+                items[board].score = { left: 0, right: 0 };
+            }
             console.log(socket.id + ' disconnected');
         });
     });
+}
+
+function initBoard() {
+    return { numberOfClients: 0,
+             ball: { id: 'ball',
+                     color: 180,
+                     radius: 2,
+                     x: 50, y: 50,
+                     dX: 0, dY: 0 },
+             score: { left: 0, right: 0 },
+             scoreCounter: { left: 0, right: 0 } }
 }
 
 function makeBoardCode() {
