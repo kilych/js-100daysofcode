@@ -43,11 +43,11 @@ stage.addChild(net);
 
 var circle = { radius: radius,
                x: width * 0.2,
-               y: height * 0.3,
+               y: netLevel,
                dX: 0,
                dY: 0,
                initX: width/2,
-               initY: height * 0.3,
+               initY: netLevel,
                initdX: 0,
                initdY: 0 };
 
