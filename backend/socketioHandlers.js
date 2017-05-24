@@ -340,6 +340,97 @@ exports.handleBoards37 = io => {
     });
 }
 
+exports.handleBoards38 = io => {
+    let items = {};
+    const defaultBoardCode = 'eg32r';
+    items[defaultBoardCode] = initBoard();
+
+    io.on('connection', function(socket) {
+        console.log(socket.id + ' connected');
+        let boardCode = defaultBoardCode;
+
+        socket.on('chooseboard', function(choosedBoard) {
+            if(items[choosedBoard] === undefined) {
+                boardCode = makeUniqCode(items);
+                items[boardCode] = initBoard();
+            } else { boardCode = choosedBoard; }
+            socket.join(boardCode);
+            items[boardCode].board = boardCode;
+            items[boardCode].numberOfClients++;
+            socket.emit('init', items[boardCode]);
+            console.log(socket.id + ' joined board ' + items[boardCode].board);
+        });
+
+        socket.on('newitem', function(item) {
+            item['id'] = socket.id;
+            items[boardCode][socket.id] = item;
+            socket.broadcast.to(boardCode).emit('newitem', item);
+        });
+
+        socket.on('moveto', function(point) {
+            if (items[boardCode][socket.id] !== undefined) {
+                handleMoveTo(items[boardCode], socket, point);
+                socket.broadcast.to(boardCode).emit('moveto', point);
+                // console.log(point.id + ' moves to ' + point.x + ', ' + point.y);
+            }
+        });
+
+        socket.on('goal', function(who) {
+            if (items[boardCode][socket.id] !== undefined) {
+                handleGoal(items[boardCode], socket, who);
+            }
+        });
+
+        socket.on('disconnect', function() {
+            delete items[boardCode][socket.id];
+            io.to(boardCode).emit('delete', socket.id);
+            items[boardCode].numberOfClients--;
+            if (items[boardCode].numberOfClients <= 0) {
+                items[boardCode].score = { left: 0, right: 0 };
+            }
+            console.log(socket.id + ' disconnected');
+        });
+    });
+}
+
+function handleMoveTo(board, socket, point) {
+    if (point.id == 'ball') {
+        board.ball.x = point.x;
+        board.ball.y = point.y;
+        board.ball.dX = point.dX;
+        board.ball.dY = point.dY;
+    } else {
+        board[socket.id].x = point.x;
+        board[socket.id].y = point.y;
+        point.id = socket.id;
+    }
+}
+
+function handleGoal(board, socket, who) {
+    if (who == 'left') {
+        board.scoreCounter.left++;
+        if (board.scoreCounter.left === board.numberOfClients) {
+            board.scoreCounter.left = 0;
+            board.score.left++;
+            io.to(boardCode).emit('goal', board.score);
+            console.log(socket.id + ' new score ' +
+                        board.score.left + ':' +
+                        board.score.right);
+        }
+    }
+    if (who == 'right') {
+        board.scoreCounter.right++;
+        if (board.scoreCounter.right === board.numberOfClients) {
+            board.scoreCounter.right = 0;
+            board.score.right++;
+            io.to(boardCode).emit('goal', board.score);
+            console.log(socket.id + ' new score ' +
+                        board.score.left + ':' +
+                        board.score.right);
+        }
+    }
+}
+
 function initBoard() {
     return { numberOfClients: 0,
              ball: { id: 'ball',
@@ -351,6 +442,12 @@ function initBoard() {
              scoreCounter: { left: 0, right: 0 } }
 }
 
+function makeUniqCode(items) {
+    let code;
+    do { code = makeBoardCode(); } while (items[code] !== undefined)
+    return code;
+}
+
 function makeBoardCode() {
     let code = '';
     const source = '0123456789abcdefghijklmnopqrstuvwxyz',
@@ -358,11 +455,5 @@ function makeBoardCode() {
     for ( let i = 0; i < 5; i++ ) {
         code += source.charAt(Math.floor(Math.random() * len));
     }
-    return code;
-}
-
-function makeUniqCode(items) {
-    let code;
-    do { code = makeBoardCode(); } while (items[code] !== undefined)
     return code;
 }
