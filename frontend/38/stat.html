@@ -16,13 +16,14 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       $(function () {
-        // var socket = io('/chat');
-        var socket = io.connect('/38/chat');
+        var socket = io('/38');
+        // var socket = io.connect('/38');
+        socket.emit('statinitrequest');
         socket.on('statinit', function(rows) {
-          for (var row in rows) {
+          rows.forEach(function(row) {
               $('#messages').append($('<li>').text(row));
               window.scrollTo(0, document.body.scrollHeight);
-          }
+          });
         });
         socket.on('statupdate', function(row) {
           $('#messages').append($('<li>').text(row));

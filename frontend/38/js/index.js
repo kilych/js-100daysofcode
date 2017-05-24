@@ -13,7 +13,7 @@ const alpha = 0.1,
 var objects = {};
 var socket = io.connect('/38');
 var circleCount = 25;
-var init = false;
+var run = false;
 
 var canvas = document.getElementById('canvas');
 canvas.width = width;
@@ -75,6 +75,7 @@ socket.on('init', function(items) {
 
     text.text = "Tap or click anywhere to move your circle." +
         "\nHit the blue circle for scoring goal." +
+        "\nScore 3 faster than other team." +
         "\nBoard code: " + board +
         "\nScore: " + items.score.left + " : " + items.score.right;
     delete items.score;
@@ -109,7 +110,7 @@ socket.on('init', function(items) {
     ball.dX = items.ball.dX;
     ball.dY = items.ball.dY;
 
-    init = true;
+    run = true;
 });
 
 socket.on('newitem', function(item) { scaleItem(item); makeCircle(item) });
@@ -127,8 +128,17 @@ socket.on('moveto', function(point) {
 socket.on('goal', function(score) {
     text.text = "Tap or click anywhere to move your circle." +
         "\nHit the blue circle for scoring goal." +
+        "\nScore 3 faster than other team." +
         "\nBoard code: " + board +
         "\nScore: " + score.left + " : " + score.right;
+});
+
+socket.on('finalgoal', function(score) {
+    text.text = "End of the game." +
+        "\nReload page." +
+        "\nBoard code: " + board +
+        "\nFinal score: " + score.left + " : " + score.right;
+    setTimeout(function() { run = false; }, 300);
 });
 
 socket.on('delete', function(id) {
@@ -179,7 +189,7 @@ function moveTo(tweens, pointX, pointY) {
 }
 
 function tick() {
-    if (init) {
+    if (run) {
         circle.dY += ddY;
         circle.x += circle.dX;
         circle.y += circle.dY;

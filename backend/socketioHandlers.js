@@ -342,6 +342,7 @@ exports.handleBoards37 = io => {
 
 exports.handleBoards38 = io => {
     let items = {};
+    let results = [];
     const defaultBoardCode = 'eg32r';
     items[defaultBoardCode] = initBoard();
 
@@ -376,9 +377,24 @@ exports.handleBoards38 = io => {
         });
 
         socket.on('goal', function(who) {
-            if (items[boardCode][socket.id] !== undefined) {
-                handleGoal(items[boardCode], socket, who);
+            var board = items[boardCode];
+            if (board[socket.id] !== undefined) {
+                handleGoal(board, socket, who);
+                if (board.score[who] >= 3) {
+                    var row = UTCDateNow() + ' board: ' + board.board + ' score: ' +
+                        board.score.left + ':' + board.score.right;
+                    console.log(row);
+                    results.push(row);
+                    io.to(boardCode).emit('finalgoal', board.score);
+                    io.emit('statupdate', row);
+                } else { io.to(boardCode).emit('goal', board.score); }
+                console.log(socket.id + ' new score ' +
+                            board.score.left + ':' + board.score.right);
             }
+        });
+
+        socket.on('statinitrequest', function() {
+            socket.emit('statinit', results);
         });
 
         socket.on('disconnect', function() {
@@ -407,28 +423,32 @@ function handleMoveTo(board, socket, point) {
 }
 
 function handleGoal(board, socket, who) {
-    if (who == 'left') {
-        board.scoreCounter.left++;
-        if (board.scoreCounter.left === board.numberOfClients) {
-            board.scoreCounter.left = 0;
-            board.score.left++;
-            io.to(boardCode).emit('goal', board.score);
-            console.log(socket.id + ' new score ' +
-                        board.score.left + ':' +
-                        board.score.right);
-        }
+    board.scoreCounter[who]++;
+    if (board.scoreCounter[who] === board.numberOfClients) {
+        board.scoreCounter[who] = 0;
+        board.score[who]++;
     }
-    if (who == 'right') {
-        board.scoreCounter.right++;
-        if (board.scoreCounter.right === board.numberOfClients) {
-            board.scoreCounter.right = 0;
-            board.score.right++;
-            io.to(boardCode).emit('goal', board.score);
-            console.log(socket.id + ' new score ' +
-                        board.score.left + ':' +
-                        board.score.right);
-        }
-    }
+}
+
+function UTCDateNow() {
+    var date = new Date();
+
+    var dd = date.getUTCDate();
+    if (dd < 10) { dd = '0' + dd; }
+
+    var mm = date.getUTCMonth() + 1;
+    if (mm < 10) { mm = '0' + mm; }
+
+    var yy = date.getUTCFullYear() % 100;
+    if (yy < 10) { yy = '0' + yy; }
+
+    var hh = date.getUTCHours();
+    if (hh < 10) { hh = '0' + hh; }
+
+    var mn = date.getUTCMinutes();
+    if (mn < 10) { mn = '0' + mn; }
+
+    return 'UTC: ' + dd + '.' + mm + '.' + yy + ':' + hh + ':' + mn;
 }
 
 function initBoard() {
