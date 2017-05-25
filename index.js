@@ -147,6 +147,10 @@ app.get('/38/stat', function(req, res) {
     res.sendFile(__dirname + '/frontend/38/stat.html');
 });
 
+app.get('/39', function(req, res) {
+    res.sendFile(__dirname + '/frontend/39/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
