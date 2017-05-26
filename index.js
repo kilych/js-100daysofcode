@@ -151,6 +151,10 @@ app.get('/39', function(req, res) {
     res.sendFile(__dirname + '/frontend/39/index.html');
 });
 
+app.get('/40', function(req, res) {
+    res.sendFile(__dirname + '/frontend/40/index.html');
+});
+
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
 });
