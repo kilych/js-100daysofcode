@@ -3,7 +3,9 @@ var width = window.innerWidth,
     length = ((width < height) ? width : height),
     fieldStart = 0.1 * length,
     fieldLength = 0.8 * length,
-    cellSize = fieldLength/3;
+    cellSize = fieldLength/3,
+    shapeSize = 0.8 * cellSize,
+    dSize = (cellSize - shapeSize) / 2;
 
 var canvas = document.getElementById('canvas');
 canvas.width = width;
@@ -29,11 +31,13 @@ canvas.addEventListener("mousedown", function(event) {
         if (drawCounter % 2 === 0) {
             drawInCell(cell, drawCross);
             usedCells.push(cell);
+            crosses.push(cell);
             drawCounter++;
             checkTrees(crosses);
         } else {
             drawInCell(cell, drawCircle);
             usedCells.push(cell);
+            zeros.push(cell);
             drawCounter++;
             checkTrees(zeros);
         }
@@ -43,23 +47,36 @@ canvas.addEventListener("mousedown", function(event) {
 function checkTrees(arr) {
     if (checkTree(arr, [0, 1, 2])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
-    } else if (checkTree(arr, [0, 1, 2])) {
+        drawLine(fieldStart, fieldStart + 0.45 * cellSize, fieldLength, 0);
+    } else if (checkTree(arr, [3, 4, 5])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
-    } else     if (checkTree(arr, [0, 1, 2])) {
+        drawLine(fieldStart, fieldStart + 1.45 * cellSize, fieldLength, 0);
+    } else if (checkTree(arr, [6, 7, 8])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
-    } else     if (checkTree(arr, [0, 1, 2])) {
+        drawLine(fieldStart, fieldStart + 2.45 * cellSize, fieldLength, 0);
+    } else if (checkTree(arr, [0, 3, 6])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
-    } else     if (checkTree(arr, [0, 1, 2])) {
+        drawLine(fieldStart + 0.5 * cellSize, fieldStart, 0, fieldLength);
+    } else     if (checkTree(arr, [1, 4, 7])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
-    } else if (checkTree(arr, [0, 1, 2])) {
+        drawLine(fieldStart + 1.5 * cellSize, fieldStart, 0, fieldLength);
+    } else if (checkTree(arr, [2, 5, 8])) {
         drawCounter = 9;
-        drawLine(fieldStart, fieldStart + 0.05 * cellSize, fieldLength, 0);
+        drawLine(fieldStart + 2.5 * cellSize, fieldStart, 0, fieldLength);
+    } else if (checkTree(arr, [0, 4, 8])) {
+        drawCounter = 9;
+        drawLine(fieldStart + dSize, fieldStart, fieldLength - dSize, fieldLength - dSize);
+    } else if (checkTree(arr, [2, 4, 6])) {
+        drawCounter = 9;
+        drawLine(fieldStart + fieldLength - dSize, fieldStart, -fieldLength + dSize, fieldLength - dSize);
     }
+}
+
+function checkTree(haystack, needles) {
+    for (var i = 0; i < needles.length; i++) {
+        if (haystack.indexOf(needles[i]) < 0) { return false; }
+    }
+    return true;
 }
 
 function whichCell(x, y) {
@@ -82,9 +99,9 @@ function whichCell(x, y) {
 function drawInCell(cellNum, drawFunc) {
     var i = cellNum % 3;
     var j = (cellNum - i) / 3;
-    drawFunc(fieldStart + cellSize * (i + 0.1),
-              fieldStart + cellSize * (j + 0.1),
-              0.8 * cellSize);
+    drawFunc(fieldStart + cellSize * i + dSize,
+             fieldStart + cellSize * j + dSize,
+              shapeSize);
 }
 
 function drawLine(startX, startY, dX, dY) {
