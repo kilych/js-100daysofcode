@@ -12,48 +12,42 @@ canvas.width = width;
 canvas.height = height;
 var context = canvas.getContext('2d');
 
-var drawCounter = 0;
 var usedCells = [];
 var crosses = [];
 var zeros = [];
 var crossWins = 0;
 var zeroWins = 0;
 
+restart();
+
 canvas.addEventListener("mousedown", function(event) {
     var cell = whichCell(event.x, event.y);
     var win = false;
     console.log(cell);
     if (cell !== false && 0 > usedCells.indexOf(cell)
-        && drawCounter < 9
-       ) {
-        if (drawCounter % 2 === 0) {
+        && usedCells.length < 9) {
+        if (usedCells.length % 2 === 0) {
             drawInCell(cell, drawCross);
             usedCells.push(cell);
             crosses.push(cell);
-            drawCounter++;
             win = checkTrees(crosses);
             if (win) {
                 crossWins++;
-                setTimeout(restart, 1000);
             }
         } else {
             drawInCell(cell, drawCircle);
             usedCells.push(cell);
             zeros.push(cell);
-            drawCounter++;
             win = checkTrees(zeros);
             if (win) {
                 zeroWins++;
-                setTimeout(restart, 1000);
             }
         }
+        if (win || usedCells.length == 9) setTimeout(restart, 1000);
     }
 });
 
-restart();
-
 function restart() {
-    drawCounter = 0;
     usedCells = [];
     crosses = [];
     zeros = [];
