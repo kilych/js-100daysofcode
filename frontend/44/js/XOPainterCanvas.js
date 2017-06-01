@@ -24,7 +24,7 @@ function XOPainterCanvas(canvas, boardOrder) {
             borderX += this.cellSize;
             if (k % this.boardOrder === (this.boardOrder - 1)) {
                 borderY += this.cellSize;
-                borderX = 0;
+                borderX = this.boardStartX;
             }
         }
         return false;

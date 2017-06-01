@@ -45,7 +45,7 @@ function whichCell(x, y) {
         borderX += cellSize;
         if (i % 3 === 2) {
             borderY += cellSize;
-            borderX = 0;
+            borderX = fieldStart;
         }
     }
     return false;

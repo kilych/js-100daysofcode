@@ -1,6 +1,6 @@
 /**
  * Static properties that depends on canvas need to be switched to functions.
- * cell is now object not array. Some other may be outdated.
+ * cell is now object not array. Some other stuff may be outdated.
  */
 
 var xoPainterCanvas = {
