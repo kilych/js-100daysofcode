@@ -19,10 +19,10 @@ function XOPainterCanvas(canvas, boardOrder) {
             if (borderX < x && x < borderX + this.cellSize && borderY < y && y < borderY + this.cellSize) {
                 var i = k % this.boardOrder,
                     j = (k - i) / this.boardOrder;
-                return [i, j];
+                return {col: i, row: j};
             }
             borderX += this.cellSize;
-            if (k % this.boardOrder === this.boardOrder - 1) {
+            if (k % this.boardOrder === (this.boardOrder - 1)) {
                 borderY += this.cellSize;
                 borderX = 0;
             }
@@ -43,16 +43,16 @@ function XOPainterCanvas(canvas, boardOrder) {
         return this;
     };
 
-    // cell is two element array: first for x, from 0 to 2, from left to right;
-    // second for y, from 0 to 2, from top to bottom
+    // cell is two element object: col, from 0 to boardOrder, from left to right;
+    // row, from 0 to boardOrder, from top to bottom
     this.drawShapeInCell = function(who, cell) {
         if (who == 'x') {
-            this.drawX(this.boardStartX + this.cellSize * cell[0] + this.dSize,
-                  this.boardStartX + this.cellSize * cell[1] + this.dSize,
+            this.drawX(this.boardStartX + this.cellSize * cell.col + this.dSize,
+                  this.boardStartX + this.cellSize * cell.row + this.dSize,
                   this.shapeSize);
         } else if (who == 'o') {
-            this.drawO(this.boardStartX + this.cellSize * cell[0] + this.dSize,
-                  this.boardStartX + this.cellSize * cell[1] + this.dSize,
+            this.drawO(this.boardStartX + this.cellSize * cell.col + this.dSize,
+                  this.boardStartX + this.cellSize * cell.row + this.dSize,
                   this.shapeSize);
         }
     };
@@ -76,8 +76,8 @@ function XOPainterCanvas(canvas, boardOrder) {
     };
 
     this.drawLineInCell = function(type, cell) {
-        var i = cell[0],
-            j = cell[1];
+        var i = cell.col,
+            j = cell.row;
         switch (type) {
         case 'horizontal':
             this.drawLine(this.boardStartX + i * this.cellSize,

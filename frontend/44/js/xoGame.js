@@ -74,10 +74,10 @@ var xoGame = {
 
     nextCell(type, cell, shift) {
         switch(type) {
-        case 'horizontal': return [cell[0] + shift, cell[1]];
-        case 'vertical': return [cell[0], cell[1] + shift];
-        case 'descending': return [cell[0] + shift, cell[1] + shift];
-        case 'ascending': return [cell[0] + shift, cell[1] - shift];
+        case 'horizontal': return {col: cell.col + shift, row: cell.row};
+        case 'vertical': return {col: cell.col, row: cell.row + shift};
+        case 'descending': return {col: cell.col + shift, row: cell.row + shift};
+        case 'ascending': return {col: cell.col + shift, row: cell.row - shift};
         }
     },
 
@@ -86,5 +86,5 @@ var xoGame = {
             .indexOf(this.getPlain(cell));
     },
 
-    getPlain(index) { return index[0] + this.painter.boardOrder * index[1]; },
+    getPlain(cell) { return cell.col + this.painter.boardOrder * cell.row; },
 };
