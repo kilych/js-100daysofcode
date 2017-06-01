@@ -467,48 +467,47 @@ exports.handleBoards44 = io => {
 
     io.on('connection', function(socket) {
         console.log(socket.id + ' connected');
-        let boardCode = makeUniqCode(boards);
-        socket.emit('suggest board', boardCode)
+        let code = makeUniqCode(boards);
+        socket.emit('suggest board', code)
         socket.on('choose board', function(choosedBoard) {
+            console.log(socket.id + ' choose board');
             if(boards[choosedBoard] === undefined
                || boards[choosedBoard].clientCounter === 2) {
-                boardCode = makeUniqCode(boards);
-                boards[boardCode] = {};
-                boards[boardCode].boardCode = boardCode;
-                boards[boardCode].clientCounter = 0;
-                boards[boardCode].score = {};
-                boards[boardCode].score.crosses = 0;
-                boards[boardCode].score.zeros = 0;
-                boards[boardCode].score.draw = 0;
-                boards[boardCode].scoreCounter = 0;
-            } else { boardCode = choosedBoard; }
-            socket.join(boardCode);
-            boards[boardCode].clientCounter++;
-            if (boards[boardCode].clientCounter = 1) {
-                socket.emit('wait another one', boards[boardCode]);
-                console.log(socket.id + ' joined board ' + boards[boardCode].boardCode + ' wait another one');
-            } else if (boards[boardCode].clientCounter = 2) {
-                io.to(boardCode).emit('start game', boards[boardCode]);
-                console.log(socket.id + ' joined board ' + boards[boardCode].boardCode + ' start game');
+                code = makeUniqCode(boards);
+                boards[code] = {};
+                boards[code].code = code;
+                boards[code].clientCounter = 0;
+                boards[code].ongoing = false;
+                // boards[code].score = {};
+                // boards[code].score.x = 0;
+                // boards[code].score.o = 0;
+                // boards[code].score.draw = 0;
+                // boards[code].scoreCounter = 0;
+            } else { code = choosedBoard; }
+            socket.join(code);
+            boards[code].clientCounter++;
+            if (boards[code].clientCounter === 1) {
+                boards[code].team = 'x';
+                socket.emit('init', boards[code]);
+                console.log(socket.id + ' joined board ' + boards[code].code + ' wait another one');
+            } else if (boards[code].clientCounter === 2) {
+                boards[code].team = 'o';
+                socket.emit('init', boards[code]);
+                io.to(code).emit('start');
+                console.log(socket.id + ' joined board ' + boards[code].code + ' start game');
             }
         });
-        socket.on('new turn', function(cell) {
-            socket.broadcast.to(boardCode).emit('new turn', cell);
-        });
-        socket.on('win', function(who) {
-            board[boardCode].scoreCounter++;
-            if (boards[boardCode].scoreCounter === 2) {
-                boards[boardCode].scoreCounter = 0;
-                boards[boardCode].score[who]++;
-                io.to(boardCode).emit('start game', boards[boardCode]);
-            }
+        socket.on('turn', function(cell) {
+            socket.broadcast.to(code).emit('turn', cell);
         });
         socket.on('disconnect', function() {
-            boards[boardCode].clientCounter--;
-            if (boards[boardCode].clientCounter === 1) {
-                socket.emit('wait another one', boards[boardCode]);
-            } else if (boards[boardCode].clientCounter === 2) {
-                delete boards[boardCode];
+            if (boards[code] !== undefined) {
+                boards[code].clientCounter--;
+                if (boards[code].clientCounter === 1) {
+                    socket.emit('wait another one', boards[code]);
+                } else if (boards[code].clientCounter === 2) {
+                    delete boards[code];
+                }
             }
             console.log(socket.id + ' disconnected');
         });

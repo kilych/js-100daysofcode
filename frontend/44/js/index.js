@@ -10,69 +10,41 @@ var game = Object.create(xoGame);
 game.painter = painter;
 game.winLength = 5;
 
-game.painter.canvas.addEventListener("mousedown", function(event) {
-    var cell = game.painter.whichCell(event.x, event.y);
-    console.log(cell);
-    if (cell) { game.checkTurn(cell); }
+game.painter.canvas.addEventListener("mousedown", handleMouse);
+
+var socket = io.connect('/44');
+var client = {};
+
+socket.on('suggest board', function(code) {
+    client.code = prompt("Enter code of a board you want to connect.\n" +
+                         "If CANCEL or the board doesn't exist or the board is full of players\n" +
+                         "new board will be created.",
+                         code);
+    socket.emit('choose board', client.code);
 });
 
-game.restart();
+socket.on('init', function(init) {
+    client = init;
+    game.restart(' Board: ' + client.code + ' State: waiting');
+});
 
+socket.on('start', function() {
+    client.ongoing = true;
+    game.restart(' Board: ' + client.code);
+});
 
-/*
-  var socket = io.connect('/44');
+socket.on('turn', function(cell) {
+    game.checkTurn(cell);
+});
 
-  socket.on('suggest board', function(suggestedCode) {
-  boardCode = prompt("Enter code of a board you want to connect.\n" +
-  "If CANCEL or the board doesn't exist or the board is full of players\n" +
-  "new board will be created.",
-  suggestedCode);
-  socket.emit('choose board', boardCode);
-  });
-
-  socket.on('wait another one', function(init) {
-  board = init;
-  run = false;
-  waited = true;
-  restart();
-  });
-
-  socket.on('start game', function(init) {
-  board = init;
-  if (waited) { yourTurn = true; }
-  run = true;
-  restart();
-  });
-
-  socket.on('new turn', function(cell) {
-  var win = false;
-  console.log(cell);
-  if (run && cell !== false && 0 > usedCells.indexOf(cell)
-  && usedCells.length < 9) {
-  if (!waited) {
-  drawInCell(cell, drawCross);
-  usedCells.push(cell);
-  crosses.push(cell);
-  win = checkTrees(crosses);
-  if (win) {
-  socket.emit('win', 'crosses');
-  run = false;
-  }
-  } else {
-  drawInCell(cell, drawCircle);
-  usedCells.push(cell);
-  zeros.push(cell);
-  win = checkTrees(zeros);
-  if (win) {
-  socket.emit('win', 'crosses');
-  run = false;
-  }
-  }
-  yourTurn = false;
-  if (!win && usedCells.length == 9) {
-  socket.emit('win', 'draw');
-  run = false;
-  }
-  }
-  });
-*/
+function handleMouse(event) {
+    if (client.ongoing
+        && game.whoPlays === client.team) {
+        var cell = game.painter.whichCell(event.x, event.y);
+        console.log(cell);
+        if (cell) {
+            var checkedCell = game.checkTurn(cell);
+            if (checkedCell) { socket.emit('turn', checkedCell); }
+        }
+    }
+}

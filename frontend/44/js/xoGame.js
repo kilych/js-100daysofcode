@@ -1,32 +1,30 @@
 var xoGame = {
-
     painter: {},
-    score: {x: 0, o: 0, draw: 0},
-    boardCode: '',
-
     winLength: 3,
 
-    state: 'x turn',
+    score: {x: 0, o: 0, draw: 0},
+    whoPlays: 'x',
     usedCells: {x: [], o: []},
 
     checkTurn(cell) {
-        var who = this.state[0];
+        var who = this.whoPlays;
         if (this.checkEmpty('x', cell)
             && this.checkEmpty('o', cell)) {
             this.usedCells[who].push(cell);
-            this.state = this.otherPlayer(who) + ' turn';
+            this.whoPlays = this.otherPlayer(who);
             this.painter.drawShapeInCell(who, cell);
             var winningCells = this.checkWin(who, cell);
             if (winningCells) {
                 var type = winningCells.pop();
                 this.painter.drawLineInCells(type, winningCells);
                 this.score[who]++;
-                this.restart();
+                this.restart('');
             } else if (this.checkDraw()) {
                 this.score.draw++;
-                this.restart();
+                this.restart('');
             }
-        }
+            return cell;
+        } else { return false; }
     },
 
     otherPlayer(who) {
@@ -34,16 +32,16 @@ var xoGame = {
         else if (who === 'o') { return 'x'; }
     },
 
-    restart() {
+    restart(msg) {
         this.usedCells = {x: [], o: []};
-        this.state = 'x turn';
-        var text = this.getGameText();
+        this.whoPlays = 'x';
+        var text = this.getGameText() + msg;
         setTimeout(function() { this.painter.reDraw(text) }, 1000);
     },
 
     getGameText() {
-        return "Board: " + this.boardCode + " X: " + this.score.x
-            + " O: " + this.score.o + " Draw: " + this.score.draw;
+        return " X: " + this.score.x + " O: " + this.score.o
+            + " Draw: " + this.score.draw;
     },
 
     checkDraw() {
