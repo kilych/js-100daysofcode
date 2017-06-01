@@ -170,11 +170,19 @@ app.get('/43', function(req, res) {
 iohandlers.handleBoards44(io.of('/44'));
 
 app.get('/44', function(req, res) {
-    res.sendFile(__dirname + '/frontend/44/index.html');
+    res.sendFile(__dirname + '/frontend/44/day44.html');
 });
 
+iohandlers.handleBoards44(io.of('/45'));
+
 app.get('/45', function(req, res) {
-    res.sendFile(__dirname + '/frontend/44/index.html');
+    res.sendFile(__dirname + '/frontend/44/day45.html');
+});
+
+iohandlers.handleBoards44(io.of('/46'));
+
+app.get('/46', function(req, res) {
+    res.sendFile(__dirname + '/frontend/44/day46.html');
 });
 
 http.listen(app.get('port'), function() {
