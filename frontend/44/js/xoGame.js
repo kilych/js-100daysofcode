@@ -16,7 +16,10 @@ var xoGame = {
             this.usedCells[who].push(cell);
             this.state = this.otherPlayer(who) + ' turn';
             this.painter.drawShapeInCell(who, cell);
-            if (this.checkWin(who, cell)) {
+            var winningCells = this.checkWin(who, cell);
+            if (winningCells) {
+                var type = winningCells.pop();
+                this.painter.drawLineInCells(type, winningCells);
                 this.score[who]++;
                 this.restart();
             } else if (this.checkDraw()) {
@@ -34,11 +37,11 @@ var xoGame = {
     restart() {
         this.usedCells = {x: [], o: []};
         this.state = 'x turn';
-        var text = this.getScoreMsg();
+        var text = this.getGameText();
         setTimeout(function() { this.painter.reDraw(text) }, 1000);
     },
 
-    getScoreMsg() {
+    getGameText() {
         return "Board: " + this.boardCode + " X: " + this.score.x
             + " O: " + this.score.o + " Draw: " + this.score.draw;
     },
@@ -56,20 +59,24 @@ var xoGame = {
     },
 
     checkWinByType(type, who, cell) {
-        for(var shift = 0; shift < this.winLength; shift++) {
-            var res = true;
-            var filledCells = [];
-            for (var i = 0; i < this.winLength; i++) {
-                // console.log(this.nextCell(type, cell, -shift + i));
-                if (this.checkEmpty(who, this.nextCell(type, cell, -shift + i))) { res = false; break; }
-                filledCells.push(this.nextCell(type, cell, -shift + i));
+        var filledCells = [];
+        var nextCell = {};
+        var moveBackward = false;
+        var shift = 0, step = 1;
+        while (filledCells.length < this.winLength) {
+            nextCell = this.nextCell(type, cell, shift);
+            if (!this.checkEmpty(who, nextCell)) {
+                filledCells.push(nextCell);
+            } else {
+                if (moveBackward) { return false; }
+                moveBackward = true;
+                shift = 0;
+                step = -1;
             }
-            if (res) {
-                this.painter.drawLineInCells(type, filledCells);
-                return true;
-            }
+            shift += step;
         }
-        return false;
+        filledCells.push(type);
+        return filledCells;
     },
 
     nextCell(type, cell, shift) {

@@ -10,13 +10,13 @@ var game = Object.create(xoGame);
 game.painter = painter;
 game.winLength = 5;
 
-game.painter.reDraw(game.getScoreMsg());
-
 game.painter.canvas.addEventListener("mousedown", function(event) {
     var cell = game.painter.whichCell(event.x, event.y);
     console.log(cell);
     if (cell) { game.checkTurn(cell); }
 });
+
+game.restart();
 
 
 /*
