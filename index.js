@@ -167,6 +167,10 @@ app.get('/43', function(req, res) {
     res.sendFile(__dirname + '/frontend/43/index.html');
 });
 
+app.get('/xotest', function(req, res) {
+    res.sendFile(__dirname + '/frontend/44/day43.html');
+});
+
 iohandlers.handleBoards44(io.of('/44'));
 
 app.get('/44', function(req, res) {

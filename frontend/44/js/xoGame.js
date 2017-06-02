@@ -8,13 +8,14 @@ var xoGame = {
 
     checkTurn(cell) {
         var who = this.whoPlays;
-        if (this.checkEmpty('x', cell)
-            && this.checkEmpty('o', cell)) {
+        if (this.isEmpty('x', cell)
+            && this.isEmpty('o', cell)) {
             this.usedCells[who].push(cell);
             this.whoPlays = this.otherPlayer(who);
             this.painter.drawShapeInCell(who, cell);
             var winningCells = this.checkWin(who, cell);
             if (winningCells) {
+                console.log(winningCells);
                 var type = winningCells.pop();
                 this.painter.drawLineInCells(type, winningCells);
                 this.score[who]++;
@@ -58,16 +59,13 @@ var xoGame = {
 
     checkWinByType(type, who, cell) {
         var filledCells = [];
-        var nextCell = {};
-        var moveBackward = false;
         var shift = 0, step = 1;
         while (filledCells.length < this.winLength) {
-            nextCell = this.nextCell(type, cell, shift);
-            if (!this.checkEmpty(who, nextCell)) {
-                filledCells.push(nextCell);
-            } else {
-                if (moveBackward) { return false; }
-                moveBackward = true;
+            var nextCell = this.nextCell(type, cell, shift);
+            if (this.isInsideBoard(nextCell)
+                && !this.isEmpty(who, nextCell)) { filledCells.push(nextCell); }
+            else if (step < 0) { return false; }
+            else {
                 shift = 0;
                 step = -1;
             }
@@ -86,7 +84,12 @@ var xoGame = {
         }
     },
 
-    checkEmpty(who, cell) {
+    isInsideBoard(cell) {
+        return 0 <= cell.col && cell.col < this.painter.boardOrder
+            && 0 <= cell.row && cell.row < this.painter.boardOrder;
+    },
+
+    isEmpty(who, cell) {
         return -1 === this.usedCells[who].map(this.getPlain)
             .indexOf(this.getPlain(cell));
     },
