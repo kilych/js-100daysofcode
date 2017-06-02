@@ -62,7 +62,7 @@ var xoGame = {
         var shift = 0, step = 1;
         while (filledCells.length < this.winLength) {
             var nextCell = this.nextCell(type, cell, shift);
-            if (this.isInsideBoard(nextCell)
+            if (this.painter.isInsideBoard(nextCell)
                 && !this.isEmpty(who, nextCell)) { filledCells.push(nextCell); }
             else if (step < 0) { return false; }
             else {
@@ -82,11 +82,6 @@ var xoGame = {
         case 'descending': return {col: cell.col + shift, row: cell.row + shift};
         case 'ascending': return {col: cell.col + shift, row: cell.row - shift};
         }
-    },
-
-    isInsideBoard(cell) {
-        return 0 <= cell.col && cell.col < this.painter.boardOrder
-            && 0 <= cell.row && cell.row < this.painter.boardOrder;
     },
 
     isEmpty(who, cell) {

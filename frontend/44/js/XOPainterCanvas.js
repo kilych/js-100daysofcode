@@ -13,21 +13,18 @@ function XOPainterCanvas(canvas, boardOrder) {
     this.dSize = (this.cellSize - this.shapeSize) / 2;
 
     this.whichCell = function(x, y) {
-        var borderX = this.boardStartX,
-            borderY = this.boardStartY;
-        for (var k = 0; k < this.boardOrder * this.boardOrder; k++) {
-            if (borderX < x && x < borderX + this.cellSize && borderY < y && y < borderY + this.cellSize) {
-                var i = k % this.boardOrder,
-                    j = (k - i) / this.boardOrder;
-                return {col: i, row: j};
-            }
-            borderX += this.cellSize;
-            if (k % this.boardOrder === (this.boardOrder - 1)) {
-                borderY += this.cellSize;
-                borderX = this.boardStartX;
-            }
-        }
-        return false;
+        x -= this.boardStartX;
+        y -= this.boardStartY;
+        var cell = {};
+        cell.col = Math.floor(x / this.cellSize);
+        cell.row = Math.floor(y / this.cellSize);
+        if (this.isInsideBoard(cell)) { return cell; }
+        else { return false; }
+    };
+
+    this.isInsideBoard = function(cell) {
+        return 0 <= cell.col && cell.col < this.boardOrder
+            && 0 <= cell.row && cell.row < this.boardOrder;
     };
 
     this.reDraw = function(text) {
