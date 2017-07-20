@@ -5,7 +5,8 @@ let app = express();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
-let iohandlers = require('./backend/socketioHandlers.js');
+let iohandlers = require(__dirname + '/backend/socketioHandlers.js');
+const telegram = require('telegram-bot-example');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -188,6 +189,10 @@ iohandlers.handleBoards44(io.of('/46'));
 app.get('/46', function(req, res) {
     res.sendFile(__dirname + '/frontend/44/day46.html');
 });
+
+// Days 47-
+const bot = telegram.makeBot(process.env.TELEGRAM_BOT_TOKEN);
+bot.start();
 
 http.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));

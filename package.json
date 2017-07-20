@@ -1,9 +1,9 @@
 {
   "name": "kilych-100daysofcode",
-  "description": "A simple Node.js web-server",
+  "description": "100 days of code challenge passing site",
   "engines": {
-    "node": "7.x",
-    "npm": "4.5.0"
+    "node": ">=7.10.1",
+    "npm": ">=4.5.0"
   },
   "main": "index.js",
   "scripts": {
@@ -11,14 +11,17 @@
   },
   "dependencies": {
     "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "telegram-bot-example": "0.0.1"
   },
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "https://github.com/kilych/js-100daysofcode.git"
   },
   "keywords": [
     "node",
-    "heroku"
+    "javascript",
+    "100 days of code"
   ],
   "license": "MIT",
   "version": "0.0.1",
