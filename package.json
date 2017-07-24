@@ -9,22 +9,22 @@
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": {
-    "express": "^4.15.2",
-    "socket.io": "^1.7.3",
-    "telegram-bot-example": "0.0.1"
-  },
+  "author": "kilych",
+  "license": "MIT",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kilych/js-100daysofcode.git"
+    "url": "git+https://github.com/kilych/js-100daysofcode.git"
   },
   "keywords": [
     "node",
     "javascript",
     "100 days of code"
   ],
-  "license": "MIT",
-  "version": "0.0.1",
-  "devDependencies": {},
-  "author": "kilych"
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3",
+    "telegram-bot-example": ">=0.0.1"
+  },
+  "devDependencies": {}
 }
