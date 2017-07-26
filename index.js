@@ -193,7 +193,7 @@ app.get('/46', function(req, res) {
 // Days 47-
 if (!process.env.TELEGRAM_BOT_TOKEN) {
   console.log('Error: Telegram bot token is not set.');
-} else if (process.env.TELEGRAM_BOT_ENABLED) {
+} else if (Number(process.env.TELEGRAM_BOT_ENABLED) === 1) {
   const bot = makeBot(process.env.TELEGRAM_BOT_TOKEN);
   bot.start();
 } else console.log('Bot disabled.');
