@@ -192,11 +192,11 @@ app.get('/46', function(req, res) {
 
 // Days 47-
 if (!process.env.TELEGRAM_BOT_TOKEN) {
-  console.log('>>>\nError: Telegram bot token is not set.\n<<<');
+  console.log('Error: Telegram bot token is not set.');
 } else if (process.env.TELEGRAM_BOT_ENABLED) {
-  const bot = telegram.makeBot(process.env.TELEGRAM_BOT_TOKEN);
+  const bot = makeBot(process.env.TELEGRAM_BOT_TOKEN);
   bot.start();
-} else console.log('>>>\nBot disabled.\n<<<');
+} else console.log('Bot disabled.');
 
 http.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
