@@ -6,7 +6,7 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
 let iohandlers = require(__dirname + '/backend/socketioHandlers.js');
-const telegram = require('telegram-bot-example');
+const makeBot = require('telegram-bot-example');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -191,10 +191,12 @@ app.get('/46', function(req, res) {
 });
 
 // Days 47-
-if (process.env.TELEGRAM_BOT_TOKEN != undefined) {
-  const bot = telegram.makeExample(process.env.TELEGRAM_BOT_TOKEN);
+if (!process.env.TELEGRAM_BOT_TOKEN) {
+  console.log('>>>\nError: Telegram bot token is not set.\n<<<');
+} else if (process.env.TELEGRAM_BOT_ENABLED) {
+  const bot = telegram.makeBot(process.env.TELEGRAM_BOT_TOKEN);
   bot.start();
-} else console.log('>>>\nError: Telegram bot token is not set.\n<<<');
+} else console.log('>>>\nBot disabled.\n<<<');
 
 http.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

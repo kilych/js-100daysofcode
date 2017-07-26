@@ -24,7 +24,7 @@
   "dependencies": {
     "express": ">=4.15.3",
     "socket.io": ">=1.7.4",
-    "telegram-bot-example": ">=0.0.1"
+    "telegram-bot-example": ">=0.0.2"
   },
   "devDependencies": {}
 }
